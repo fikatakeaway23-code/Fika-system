@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Fika Takeaway",
+    "slug": "fika-takeaway",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6BCB77"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.fikatakeaway.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#6BCB77"
+      },
+      "package": "com.fikatakeaway.app",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "googleServicesFile": "./google-services.json"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        { "cameraPermission": "Fika needs camera access to upload shift and receipt photos." }
+      ],
+      [
+        "expo-image-picker",
+        { "photosPermission": "Fika needs photo library access to attach receipt images." }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#6BCB77",
+          "sounds": []
+        }
+      ]
+    ],
+    "extra": {
+      "eas": { "projectId": "fika-takeaway-project-id" }
+    }
+  }
+}

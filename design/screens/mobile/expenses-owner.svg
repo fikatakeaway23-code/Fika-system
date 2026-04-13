@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812">
+  <!-- Expenses Screen (Owner) -->
+  <rect width="375" height="812" fill="#F7F9F7"/>
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1A202C">9:41</text>
+  <text x="24" y="80" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#1A202C">Expenses</text>
+  <text x="351" y="80" font-family="Inter, sans-serif" font-size="13" fill="#2D6A4F" text-anchor="end">+ Add</text>
+
+  <!-- Filter row -->
+  <rect x="24" y="96" width="153" height="36" rx="18" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="100" y="118" font-family="Inter, sans-serif" font-size="13" fill="#718096" text-anchor="middle">April 2026 ▾</text>
+  <rect x="185" y="96" width="166" height="36" rx="18" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="268" y="118" font-family="Inter, sans-serif" font-size="13" fill="#718096" text-anchor="middle">All Categories ▾</text>
+
+  <!-- Total -->
+  <rect x="24" y="148" width="327" height="56" rx="12" fill="#2D6A4F"/>
+  <text x="40" y="172" font-family="Inter, sans-serif" font-size="13" fill="#FFFFFF" opacity="0.8">Total Expenses — April 2026</text>
+  <text x="40" y="196" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#FFFFFF">NPR 2,40,200</text>
+
+  <!-- Expense rows -->
+  <rect x="24" y="220" width="327" height="64" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="244" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Rent</text>
+  <rect x="40" y="252" width="70" height="20" rx="10" fill="#EDF2F7"/>
+  <text x="75" y="266" font-family="Inter, sans-serif" font-size="11" fill="#4A5568" text-anchor="middle">Fixed</text>
+  <text x="335" y="252" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1A202C" text-anchor="end">NPR 45,000</text>
+  <text x="335" y="272" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">Apr 1</text>
+
+  <rect x="24" y="296" width="327" height="64" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="320" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Barista Salaries (x2)</text>
+  <rect x="40" y="328" width="70" height="20" rx="10" fill="#EDF2F7"/>
+  <text x="75" y="342" font-family="Inter, sans-serif" font-size="11" fill="#4A5568" text-anchor="middle">Payroll</text>
+  <text x="335" y="328" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1A202C" text-anchor="end">NPR 50,000</text>
+  <text x="335" y="348" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">Apr 30</text>
+
+  <rect x="24" y="372" width="327" height="64" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="396" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Milk Bill</text>
+  <rect x="40" y="404" width="70" height="20" rx="10" fill="#EDF2F7"/>
+  <text x="75" y="418" font-family="Inter, sans-serif" font-size="11" fill="#4A5568" text-anchor="middle">Supplies</text>
+  <text x="335" y="404" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1A202C" text-anchor="end">NPR 32,000</text>
+  <text x="335" y="424" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">Recurring</text>
+
+  <rect x="24" y="448" width="327" height="64" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="472" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Bakery Supply</text>
+  <rect x="40" y="480" width="70" height="20" rx="10" fill="#EDF2F7"/>
+  <text x="75" y="494" font-family="Inter, sans-serif" font-size="11" fill="#4A5568" text-anchor="middle">Supplies</text>
+  <text x="335" y="480" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1A202C" text-anchor="end">NPR 18,500</text>
+
+  <!-- Bottom nav -->
+  <rect x="0" y="748" width="375" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+</svg>

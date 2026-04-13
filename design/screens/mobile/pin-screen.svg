@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812">
+  <!-- PIN Entry Screen -->
+  <rect width="375" height="812" fill="#FFFFFF"/>
+  <!-- Status bar -->
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1A202C">9:41</text>
+  <!-- Back arrow -->
+  <polyline points="36,64 24,72 36,80" fill="none" stroke="#1A202C" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Avatar -->
+  <circle cx="188" cy="156" r="40" fill="#2D6A4F"/>
+  <text x="188" y="166" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle">B1</text>
+
+  <!-- Name -->
+  <text x="188" y="220" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#1A202C" text-anchor="middle">Barista 1</text>
+  <text x="188" y="246" font-family="Inter, sans-serif" font-size="15" fill="#718096" text-anchor="middle">Enter your 4-digit PIN</text>
+
+  <!-- PIN dots -->
+  <circle cx="148" cy="296" r="10" fill="#2D6A4F"/>
+  <circle cx="176" cy="296" r="10" fill="#2D6A4F"/>
+  <circle cx="204" cy="296" r="10" fill="#E2E8F0"/>
+  <circle cx="232" cy="296" r="10" fill="#E2E8F0"/>
+
+  <!-- Keypad -->
+  <!-- Row 1 -->
+  <rect x="32" y="340" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="76" y="384" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">1</text>
+  <rect x="144" y="340" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="188" y="384" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">2</text>
+  <rect x="256" y="340" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="300" y="384" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">3</text>
+
+  <!-- Row 2 -->
+  <rect x="32" y="428" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="76" y="472" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">4</text>
+  <rect x="144" y="428" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="188" y="472" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">5</text>
+  <rect x="256" y="428" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="300" y="472" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">6</text>
+
+  <!-- Row 3 -->
+  <rect x="32" y="516" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="76" y="560" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">7</text>
+  <rect x="144" y="516" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="188" y="560" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">8</text>
+  <rect x="256" y="516" width="88" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="300" y="560" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">9</text>
+
+  <!-- Row 4 -->
+  <rect x="32" y="604" width="88" height="60" rx="12" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <text x="76" y="640" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#E53E3E" text-anchor="middle">⌫</text>
+  <rect x="144" y="604" width="88" height="60" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="188" y="640" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">0</text>
+  <rect x="256" y="604" width="88" height="60" rx="12" fill="#6BCB77"/>
+  <text x="300" y="640" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">OK</text>
+</svg>

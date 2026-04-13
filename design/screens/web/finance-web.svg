@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+  <!-- Finance Entry Web Screen -->
+  <rect width="1280" height="900" fill="#F7F9F7"/>
+
+  <!-- Sidebar -->
+  <rect width="240" height="900" fill="#2D6A4F"/>
+  <text x="32" y="52" font-family="Inter, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">FIKA</text>
+  <text x="32" y="72" font-family="Inter, sans-serif" font-size="11" fill="#FFFFFF" opacity="0.6">Staff Operations</text>
+  <text x="48" y="130" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">📊  Dashboard</text>
+  <text x="48" y="178" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">📋  Shifts</text>
+  <rect x="12" y="200" width="216" height="44" rx="8" fill="#FFFFFF" opacity="0.15"/>
+  <text x="48" y="226" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">💰  Finance</text>
+  <text x="48" y="274" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">💸  Expenses</text>
+  <text x="48" y="322" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">🏢  Memberships</text>
+  <text x="48" y="370" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">👥  HR Records</text>
+  <text x="48" y="418" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">📈  Reports</text>
+  <text x="48" y="466" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">⚙  Settings</text>
+
+  <!-- Header -->
+  <rect x="240" y="0" width="1040" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="264" y="36" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1A202C">Finance Entry</text>
+  <text x="264" y="56" font-family="Inter, sans-serif" font-size="13" fill="#718096">April 12, 2026</text>
+
+  <!-- Main form — two columns -->
+  <!-- Left col: POS + Revenue -->
+  <rect x="264" y="80" width="480" height="720" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="284" y="116" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#1A202C">Revenue</text>
+
+  <text x="284" y="148" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">POS TOTAL (NPR)</text>
+  <rect x="284" y="156" width="440" height="48" rx="8" fill="#F7F9F7" stroke="#6BCB77" stroke-width="2"/>
+  <text x="300" y="185" font-family="Inter, sans-serif" font-size="16" fill="#1A202C">13,200</text>
+
+  <text x="284" y="228" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">CASH (POS)</text>
+  <rect x="284" y="236" width="200" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="300" y="263" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">8,400</text>
+
+  <text x="508" y="228" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">DIGITAL (POS)</text>
+  <rect x="508" y="236" width="216" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="524" y="263" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">4,800</text>
+
+  <text x="284" y="308" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#1A202C">Barista Reported</text>
+  <text x="284" y="348" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">CASH REPORTED</text>
+  <rect x="284" y="356" width="200" height="44" rx="8" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <text x="300" y="383" font-family="Inter, sans-serif" font-size="15" fill="#E53E3E">8,000</text>
+
+  <text x="508" y="348" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">DIGITAL REPORTED</text>
+  <rect x="508" y="356" width="216" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="524" y="383" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">4,800</text>
+
+  <!-- Discrepancy calc -->
+  <rect x="284" y="420" width="440" height="56" rx="10" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <text x="300" y="446" font-family="Inter, sans-serif" font-size="13" fill="#C53030" font-weight="600">⚠ Discrepancy: - NPR 400 (Cash short)</text>
+  <text x="300" y="466" font-family="Inter, sans-serif" font-size="12" fill="#742A2A">POS cash NPR 8,400 vs reported NPR 8,000</text>
+
+  <!-- Right col: Expenses + Net -->
+  <rect x="764" y="80" width="472" height="720" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="784" y="116" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#1A202C">Operating Expenses</text>
+
+  <text x="784" y="148" font-family="Inter, sans-serif" font-size="12" fill="#718096">Rent (NPR)</text>
+  <rect x="784" y="156" width="432" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="800" y="183" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">45,000</text>
+
+  <text x="784" y="220" font-family="Inter, sans-serif" font-size="12" fill="#718096">Electricity</text>
+  <rect x="784" y="228" width="200" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="800" y="255" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">3,500</text>
+  <text x="1004" y="220" font-family="Inter, sans-serif" font-size="12" fill="#718096">Water Jars</text>
+  <rect x="1004" y="228" width="212" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="1020" y="255" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">800</text>
+
+  <text x="784" y="292" font-family="Inter, sans-serif" font-size="12" fill="#718096">Barista 1 Salary</text>
+  <rect x="784" y="300" width="200" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="800" y="327" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">25,000</text>
+  <text x="1004" y="292" font-family="Inter, sans-serif" font-size="12" fill="#718096">Barista 2 Salary</text>
+  <rect x="1004" y="300" width="212" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="1020" y="327" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">25,000</text>
+
+  <text x="784" y="364" font-family="Inter, sans-serif" font-size="12" fill="#718096">Milk Bill</text>
+  <rect x="784" y="372" width="200" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="800" y="399" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">32,000</text>
+  <text x="1004" y="364" font-family="Inter, sans-serif" font-size="12" fill="#718096">Bakery Bill</text>
+  <rect x="1004" y="372" width="212" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="1020" y="399" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">18,500</text>
+
+  <!-- Net profit -->
+  <rect x="784" y="436" width="432" height="80" rx="12" fill="#F0FBF1" stroke="#6BCB77" stroke-width="2"/>
+  <text x="800" y="464" font-family="Inter, sans-serif" font-size="14" fill="#2D6A4F" font-weight="600">Auto-calculated Net Profit</text>
+  <text x="800" y="504" font-family="Inter, sans-serif" font-size="32" font-weight="700" fill="#2D6A4F">NPR 84,300</text>
+
+  <!-- Save -->
+  <rect x="784" y="536" width="432" height="52" rx="12" fill="#6BCB77"/>
+  <text x="1000" y="566" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">Save Finance Record</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="72" viewBox="0 0 327 72">
+  <!-- Input Field: Focused -->
+  <text x="0" y="14" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1A202C" letter-spacing="0.05em">OPENING FLOAT (NPR)</text>
+  <rect y="22" width="327" height="44" rx="8" fill="#FFFFFF" stroke="#6BCB77" stroke-width="2"/>
+  <text x="16" y="49" font-family="Inter, sans-serif" font-size="16" fill="#1A202C">1,500</text>
+  <!-- Cursor -->
+  <rect x="59" y="34" width="2" height="20" fill="#6BCB77"/>
+</svg>

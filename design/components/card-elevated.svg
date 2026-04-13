@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="100" viewBox="0 0 327 100">
+  <!-- Card: Elevated (with shadow) -->
+  <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+    <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.10)"/>
+  </filter>
+  <rect width="327" height="100" rx="12" fill="#FFFFFF" filter="url(#shadow)"/>
+  <text x="16" y="30" font-family="Inter, sans-serif" font-size="13" fill="#718096">Net Profit (This Month)</text>
+  <text x="16" y="58" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#2D6A4F">NPR 84,300</text>
+  <text x="16" y="82" font-family="Inter, sans-serif" font-size="12" fill="#718096">After all expenses</text>
+</svg>

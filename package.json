@@ -1,0 +1,35 @@
+{
+  "name": "fika-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fika Takeaway — monorepo (backend, mobile, web)",
+  "scripts": {
+    "dev":          "concurrently -n backend,web -c green,blue \"npm run dev:backend\" \"npm run dev:web\"",
+    "dev:backend":  "cd backend && npm run dev",
+    "dev:web":      "cd web && npm run dev",
+    "dev:mobile":   "cd mobile && npx expo start",
+
+    "install:all":  "npm run install:backend && npm run install:web && npm run install:mobile",
+    "install:backend": "cd backend && npm install",
+    "install:web":     "cd web && npm install",
+    "install:mobile":  "cd mobile && npm install",
+
+    "build:web":    "cd web && npm run build",
+    "build:mobile": "cd mobile && eas build --platform android --profile production",
+
+    "db:push":    "cd backend && npx prisma db push",
+    "db:migrate": "cd backend && npx prisma migrate deploy",
+    "db:seed":    "cd backend && node prisma/seed.js",
+    "db:studio":  "cd backend && npx prisma studio",
+    "db:reset":   "cd backend && npx prisma migrate reset",
+
+    "setup": "npm run install:all && npm run db:push && npm run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "backend",
+    "web"
+  ]
+}

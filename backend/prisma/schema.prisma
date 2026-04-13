@@ -1,0 +1,445 @@
+// Fika Takeaway — Prisma Schema
+// Database: PostgreSQL 15+
+// ORM: Prisma 5
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// Users & Auth
+// ─────────────────────────────────────────────
+
+enum UserRole {
+  barista_am
+  barista_pm
+  owner
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  role      UserRole
+  pinHash   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shifts        Shift[]
+  financeRecords FinanceRecord[]
+  hrRecords     HRRecord[]
+  notionSyncs   NotionSync[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// Shifts
+// ─────────────────────────────────────────────
+
+enum ShiftType {
+  am
+  pm
+}
+
+enum ShiftStatus {
+  in_progress
+  submitted
+  reviewed
+}
+
+model Shift {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  date          DateTime    @db.Date
+  shiftType     ShiftType
+  status        ShiftStatus @default(in_progress)
+
+  // Opening
+  openingFloat  Float?
+  openingPhoto  String?     // file path
+
+  // Sales
+  cashSales     Float?
+  digitalSales  Float?
+  closingCash   Float?
+
+  // Operations
+  drinksCount   Int?
+  popularDrink  String?
+  pastriesSold  Int?
+
+  // Closing
+  closingPhoto  String?     // file path
+
+  // Issues
+  equipmentIssue  Boolean  @default(false)
+  equipmentNotes  String?
+  complaintFlag   Boolean  @default(false)
+  complaintNotes  String?
+  shiftNotes      String?
+
+  submittedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  inventoryLog  InventoryLog?
+  wasteLog      WasteLog?
+  espressoLog   EspressoLog?
+  notionSyncs   NotionSync[]
+
+  @@unique([date, shiftType])
+  @@map("shifts")
+}
+
+// ─────────────────────────────────────────────
+// Inventory
+// ─────────────────────────────────────────────
+
+model InventoryLog {
+  id      String @id @default(cuid())
+  shiftId String @unique
+  shift   Shift  @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  // Beans (kg)
+  beansOpening  Float?
+  beansClosing  Float?
+
+  // Milk (litres)
+  milkOpening   Float?
+  milkClosing   Float?
+
+  // Other stock
+  syrupsOk       Boolean @default(true)
+  iceCreamTubs   Int?
+  bobaOk         Boolean @default(true)
+  cupsRemaining  Int?
+  lidsRemaining  Int?
+  strawsOk       Boolean @default(true)
+  bakeryRemaining Int?
+
+  createdAt DateTime @default(now())
+
+  @@map("inventory_logs")
+}
+
+// ─────────────────────────────────────────────
+// Waste
+// ─────────────────────────────────────────────
+
+model WasteLog {
+  id      String @id @default(cuid())
+  shiftId String @unique
+  shift   Shift  @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  calibrationShots Int?
+  milkWasted       Float?    // litres
+  remadeDrinks     Int?
+  unsoldPastries   Int?
+  notes            String?
+
+  createdAt DateTime @default(now())
+
+  @@map("waste_logs")
+}
+
+// ─────────────────────────────────────────────
+// Espresso Dial-In
+// ─────────────────────────────────────────────
+
+enum TasteAssessment {
+  sour
+  balanced
+  bitter
+  flat
+}
+
+model EspressoLog {
+  id              String          @id @default(cuid())
+  shiftId         String          @unique
+  shift           Shift           @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  dose            Float?          // grams
+  yield           Float?          // grams
+  extractionTime  Int?            // seconds
+  tasteAssessment TasteAssessment?
+
+  createdAt DateTime @default(now())
+
+  @@map("espresso_logs")
+}
+
+// ─────────────────────────────────────────────
+// Finance
+// ─────────────────────────────────────────────
+
+model FinanceRecord {
+  id      String   @id @default(cuid())
+  date    DateTime @db.Date
+  ownerId String
+  owner   User     @relation(fields: [ownerId], references: [id])
+
+  // POS data
+  posTotal     Float?
+  posCash      Float?
+  posDigital   Float?
+
+  // Barista reported
+  baristaCashReported    Float?
+  baristaDigitalReported Float?
+
+  // Discrepancy
+  cashDiscrepancy  Float?
+  discrepancyFlag  Boolean @default(false)
+
+  // Expenses
+  rent          Float?
+  electricity   Float?
+  barista1Salary Float?
+  barista2Salary Float?
+  milkBill      Float?
+  bakeryBill    Float?
+  waterJars     Float?
+  otherExpense  Float?
+  otherNotes    String?
+
+  // Calculated
+  totalExpenses Float?
+  netProfit     Float?
+  month         Int           // 1-12
+  year          Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notionSyncs NotionSync[]
+
+  @@unique([date])
+  @@map("finance_records")
+}
+
+// ─────────────────────────────────────────────
+// Expenses (sudden / ad-hoc)
+// ─────────────────────────────────────────────
+
+enum ExpenseCategory {
+  supplies
+  utilities
+  maintenance
+  transport
+  food
+  marketing
+  other
+}
+
+enum PaidBy {
+  barista1
+  barista2
+  owner
+  shop_cash
+}
+
+model Expense {
+  id               String          @id @default(cuid())
+  name             String
+  date             DateTime        @db.Date
+  category         ExpenseCategory
+  amount           Float
+  paidBy           PaidBy
+  reimbursed       Boolean         @default(false)
+  receiptAvailable Boolean         @default(false)
+  receiptPhoto     String?
+  notes            String?
+  loggedBy         String          // user id
+  month            Int
+  year             Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  notionSyncs      NotionSync[]
+
+  @@map("expenses")
+}
+
+// ─────────────────────────────────────────────
+// Corporate Memberships
+// ─────────────────────────────────────────────
+
+enum MembershipTier {
+  daily_pass
+  team_pack
+  office_bundle
+}
+
+enum MembershipStatus {
+  active
+  pending
+  expired
+  cancelled
+}
+
+enum PaymentStatus {
+  paid
+  unpaid
+  overdue
+}
+
+model Membership {
+  id            String           @id @default(cuid())
+  companyName   String
+  contactPerson String
+  whatsapp      String
+  address       String?
+  distance      String?          // e.g. "5 min walk"
+  tier          MembershipTier
+  staffCount    Int
+  drinksPerDay  Int?
+  drinksUsed    Int              @default(0)
+  drinksRemaining Int?
+  paymentStatus PaymentStatus    @default(unpaid)
+  monthlyFee    Float
+  paymentDate   DateTime?        @db.Date
+  renewalDate   DateTime?        @db.Date
+  preferredTime String?
+  usualOrder    String?
+  monthsActive  Int              @default(0)
+  totalRevenue  Float            @default(0)
+  notes         String?
+  status        MembershipStatus @default(active)
+  joinedDate    DateTime         @db.Date
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notionSyncs NotionSync[]
+
+  @@map("memberships")
+}
+
+// ─────────────────────────────────────────────
+// HR Records
+// ─────────────────────────────────────────────
+
+enum HRRecordType {
+  attendance
+  leave
+  incident
+  salary_change
+  performance
+}
+
+enum LatenessCategory {
+  on_time
+  minor        // < 15 min
+  moderate     // 15-30 min
+  severe       // > 30 min
+}
+
+enum LeaveType {
+  sick
+  casual
+  annual
+  unpaid
+}
+
+enum IncidentType {
+  customer_complaint
+  breakage
+  cash_shortage
+  misconduct
+  other
+}
+
+enum IncrementType {
+  merit
+  annual
+  probation_pass
+  other
+}
+
+model HRRecord {
+  id           String       @id @default(cuid())
+  staffMember  String       // user id
+  shift        ShiftType?
+  recordType   HRRecordType
+  date         DateTime     @db.Date
+
+  // Attendance
+  arrivalTime      DateTime?
+  latenessCategory LatenessCategory?
+
+  // Leave
+  leaveType     LeaveType?
+  leaveDays     Int?
+  leaveApproved Boolean?
+
+  // Incident
+  incidentDescription String?
+  incidentType        IncidentType?
+  damageCost          Float?
+  deductionApplied    Float?
+  warningIssued       Boolean @default(false)
+
+  // Salary
+  salaryBefore  Float?
+  incrementType IncrementType?
+  salaryAfter   Float?
+
+  // Performance
+  performanceRating Int?     // 1-5
+
+  // Common
+  notes          String?
+  followUpRequired Boolean @default(false)
+  followUpDate   DateTime? @db.Date
+  resolved       Boolean   @default(false)
+
+  loggedBy  String           // owner user id
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  notionSyncs NotionSync[]
+
+  user User @relation(fields: [staffMember], references: [id])
+
+  @@map("hr_records")
+}
+
+// ─────────────────────────────────────────────
+// Notion Sync Log
+// ─────────────────────────────────────────────
+
+enum NotionRecordType {
+  shift
+  finance
+  expense
+  membership
+  hr
+}
+
+model NotionSync {
+  id           String           @id @default(cuid())
+  recordType   NotionRecordType
+  recordId     String
+  notionPageId String?
+  syncedAt     DateTime         @default(now())
+  success      Boolean
+  errorMessage String?
+
+  // Polymorphic relations (optional — for quick lookup)
+  shiftId      String?
+  shift        Shift?        @relation(fields: [shiftId], references: [id])
+  financeId    String?
+  finance      FinanceRecord? @relation(fields: [financeId], references: [id])
+  expenseId    String?
+  expense      Expense?      @relation(fields: [expenseId], references: [id])
+  membershipId String?
+  membership   Membership?   @relation(fields: [membershipId], references: [id])
+  hrRecordId   String?
+  hrRecord     HRRecord?     @relation(fields: [hrRecordId], references: [id])
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id])
+
+  @@map("notion_syncs")
+}

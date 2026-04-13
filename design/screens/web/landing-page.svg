@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+  <!-- Landing Page — 1280px web -->
+  <rect width="1280" height="900" fill="#FFFFFF"/>
+
+  <!-- Navbar -->
+  <rect width="1280" height="72" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <!-- Logo -->
+  <circle cx="48" cy="36" r="14" fill="#6BCB77" opacity="0.3"/>
+  <text x="32" y="41" font-family="Inter, sans-serif" font-size="22" font-weight="800" fill="#2D6A4F">FIKA</text>
+  <!-- Nav links -->
+  <text x="400" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Menu</text>
+  <text x="480" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">About</text>
+  <text x="560" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Corporate</text>
+  <text x="660" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Contact</text>
+  <!-- CTA button -->
+  <rect x="1060" y="16" width="196" height="40" rx="20" fill="#6BCB77"/>
+  <text x="1158" y="40" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Order via WhatsApp</text>
+
+  <!-- Hero section -->
+  <rect x="0" y="72" width="1280" height="500" fill="#F7F9F7"/>
+
+  <!-- Left: text content -->
+  <text x="120" y="200" font-family="Inter, sans-serif" font-size="56" font-weight="800" fill="#1A202C">Kathmandu's</text>
+  <text x="120" y="268" font-family="Inter, sans-serif" font-size="56" font-weight="800" fill="#2D6A4F">Freshest Takeaway</text>
+  <text x="120" y="336" font-family="Inter, sans-serif" font-size="56" font-weight="800" fill="#1A202C">Coffee</text>
+
+  <text x="120" y="384" font-family="Inter, sans-serif" font-size="20" fill="#718096">Fast · Fresh · Consistent · Friendly</text>
+
+  <!-- Badges -->
+  <rect x="120" y="408" width="200" height="36" rx="18" fill="#C6F6D5"/>
+  <text x="220" y="430" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#276749" text-anchor="middle">📍 Dillibazar, Kathmandu</text>
+  <rect x="336" y="408" width="188" height="36" rx="18" fill="#C6F6D5"/>
+  <text x="430" y="430" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#276749" text-anchor="middle">⏰ 6:00 AM – 8:00 PM</text>
+
+  <!-- CTA buttons -->
+  <rect x="120" y="468" width="168" height="52" rx="12" fill="#6BCB77"/>
+  <text x="204" y="498" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">See Our Menu</text>
+  <rect x="304" y="468" width="160" height="52" rx="12" fill="#FFFFFF" stroke="#2D6A4F" stroke-width="2"/>
+  <text x="384" y="498" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#2D6A4F" text-anchor="middle">WhatsApp Us</text>
+
+  <!-- Right: Coffee cup illustration placeholder -->
+  <rect x="760" y="120" width="400" height="400" rx="24" fill="#E8F8EA"/>
+  <!-- Large coffee cup -->
+  <path d="M880 220 L920 220 L910 320 L890 320 Z" fill="#2D6A4F" opacity="0.8"/>
+  <rect x="870" y="212" width="60" height="14" rx="7" fill="#2D6A4F"/>
+  <path d="M920 240 Q948 240 948 270 Q948 300 920 300" fill="none" stroke="#2D6A4F" stroke-width="8" stroke-linecap="round"/>
+  <path d="M892 196 Q896 186 892 178" fill="none" stroke="#6BCB77" stroke-width="4" stroke-linecap="round"/>
+  <path d="M900 196 Q904 186 900 178" fill="none" stroke="#6BCB77" stroke-width="4" stroke-linecap="round"/>
+  <path d="M908 196 Q912 186 908 178" fill="none" stroke="#6BCB77" stroke-width="4" stroke-linecap="round"/>
+  <text x="960" y="380" font-family="Inter, sans-serif" font-size="40" font-weight="800" fill="#6BCB77" text-anchor="middle">☕</text>
+
+  <!-- Features strip -->
+  <rect x="0" y="572" width="1280" height="120" fill="#2D6A4F"/>
+  <text x="200" y="622" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">⚡ Fast</text>
+  <text x="200" y="648" font-family="Inter, sans-serif" font-size="13" fill="#FFFFFF" opacity="0.8" text-anchor="middle">Ready in minutes</text>
+  <text x="520" y="622" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">🌿 Fresh</text>
+  <text x="520" y="648" font-family="Inter, sans-serif" font-size="13" fill="#FFFFFF" opacity="0.8" text-anchor="middle">Made to order, every time</text>
+  <text x="840" y="622" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">🎯 Consistent</text>
+  <text x="840" y="648" font-family="Inter, sans-serif" font-size="13" fill="#FFFFFF" opacity="0.8" text-anchor="middle">Calibrated every morning</text>
+  <text x="1120" y="622" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">😊 Friendly</text>
+  <text x="1120" y="648" font-family="Inter, sans-serif" font-size="13" fill="#FFFFFF" opacity="0.8" text-anchor="middle">We know your order</text>
+
+  <!-- About teaser -->
+  <rect x="120" y="720" width="1040" height="120" rx="16" fill="#F7F9F7"/>
+  <text x="640" y="758" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#1A202C" text-anchor="middle">"We are two 20-year-old founders who started Fika because Kathmandu deserved</text>
+  <text x="640" y="784" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#1A202C" text-anchor="middle">better, faster, more consistent coffee — without the café price tag."</text>
+  <text x="640" y="820" font-family="Inter, sans-serif" font-size="14" fill="#2D6A4F" font-weight="600" text-anchor="middle">— The Founders, Fika Takeaway</text>
+</svg>

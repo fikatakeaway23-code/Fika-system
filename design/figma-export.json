@@ -1,0 +1,260 @@
+{
+  "version": "1.0.0",
+  "name": "Fika Takeaway Design System",
+  "description": "Complete Figma-compatible design system export for Fika Takeaway digital product suite",
+  "meta": {
+    "brand": "Fika Takeaway",
+    "location": "Dillibazar, Kathmandu, Nepal",
+    "figmaVersion": "119",
+    "exportedAt": "2026-04-12"
+  },
+  "styles": {
+    "colors": [
+      { "name": "Brand/Primary",    "value": "#6BCB77", "description": "Light Green — primary CTA, active states" },
+      { "name": "Brand/Secondary",  "value": "#2D6A4F", "description": "Dark Green — headers, sidebar, emphasis" },
+      { "name": "Brand/Primary Light", "value": "#C6F6D5", "description": "Light green tint for badges/backgrounds" },
+      { "name": "Background/Default","value": "#FFFFFF" },
+      { "name": "Background/Surface","value": "#F7F9F7" },
+      { "name": "Status/Danger",    "value": "#E53E3E" },
+      { "name": "Status/DangerLight","value": "#FED7D7" },
+      { "name": "Status/Warning",   "value": "#F6AD55" },
+      { "name": "Status/WarningLight","value": "#FEEBC8" },
+      { "name": "Status/Success",   "value": "#6BCB77" },
+      { "name": "Status/SuccessLight","value": "#F0FFF4" },
+      { "name": "Text/Primary",     "value": "#1A202C" },
+      { "name": "Text/Secondary",   "value": "#718096" },
+      { "name": "Text/Disabled",    "value": "#A0AEC0" },
+      { "name": "Text/Inverse",     "value": "#FFFFFF" },
+      { "name": "Border/Default",   "value": "#E2E8F0" },
+      { "name": "Border/Focused",   "value": "#6BCB77" },
+      { "name": "Border/Error",     "value": "#E53E3E" }
+    ],
+    "typography": [
+      { "name": "Display/Hero",    "fontFamily": "Inter", "fontWeight": 800, "fontSize": 56, "lineHeight": 1.1 },
+      { "name": "Display/Title",   "fontFamily": "Inter", "fontWeight": 700, "fontSize": 40, "lineHeight": 1.2 },
+      { "name": "Heading/H1",      "fontFamily": "Inter", "fontWeight": 700, "fontSize": 28, "lineHeight": 1.2 },
+      { "name": "Heading/H2",      "fontFamily": "Inter", "fontWeight": 700, "fontSize": 22, "lineHeight": 1.3 },
+      { "name": "Heading/H3",      "fontFamily": "Inter", "fontWeight": 600, "fontSize": 18, "lineHeight": 1.4 },
+      { "name": "Body/Large",      "fontFamily": "Inter", "fontWeight": 400, "fontSize": 16, "lineHeight": 1.5 },
+      { "name": "Body/Default",    "fontFamily": "Inter", "fontWeight": 400, "fontSize": 15, "lineHeight": 1.5 },
+      { "name": "Body/Small",      "fontFamily": "Inter", "fontWeight": 400, "fontSize": 13, "lineHeight": 1.5 },
+      { "name": "Label/Default",   "fontFamily": "Inter", "fontWeight": 600, "fontSize": 12, "lineHeight": 1.4, "letterSpacing": "0.05em" },
+      { "name": "Button/Default",  "fontFamily": "Inter", "fontWeight": 600, "fontSize": 16, "lineHeight": 1 },
+      { "name": "Caption",         "fontFamily": "Inter", "fontWeight": 400, "fontSize": 11, "lineHeight": 1.4 },
+      { "name": "Metric/Large",    "fontFamily": "Inter", "fontWeight": 700, "fontSize": 32, "lineHeight": 1 },
+      { "name": "Pin/Key",         "fontFamily": "Inter", "fontWeight": 600, "fontSize": 28, "lineHeight": 1 }
+    ],
+    "effects": [
+      { "name": "Shadow/Card",     "type": "DROP_SHADOW", "color": "rgba(0,0,0,0.08)", "x": 0, "y": 2, "blur": 8, "spread": 0 },
+      { "name": "Shadow/Elevated", "type": "DROP_SHADOW", "color": "rgba(0,0,0,0.12)", "x": 0, "y": 8, "blur": 24, "spread": 0 },
+      { "name": "Shadow/Small",    "type": "DROP_SHADOW", "color": "rgba(0,0,0,0.05)", "x": 0, "y": 1, "blur": 2, "spread": 0 }
+    ]
+  },
+  "components": {
+    "Button": {
+      "variants": [
+        {
+          "name": "Primary",
+          "width": 200, "height": 52,
+          "cornerRadius": 12,
+          "fills": [{ "type": "SOLID", "color": "#6BCB77" }],
+          "properties": { "label": "Confirm & Submit", "labelColor": "#FFFFFF", "fontSize": 16, "fontWeight": 600 }
+        },
+        {
+          "name": "Secondary",
+          "width": 200, "height": 52,
+          "cornerRadius": 12,
+          "fills": [{ "type": "SOLID", "color": "#FFFFFF" }],
+          "strokes": [{ "type": "SOLID", "color": "#2D6A4F", "weight": 2 }],
+          "properties": { "label": "View Details", "labelColor": "#2D6A4F", "fontSize": 16, "fontWeight": 600 }
+        },
+        {
+          "name": "Danger",
+          "width": 200, "height": 52,
+          "cornerRadius": 12,
+          "fills": [{ "type": "SOLID", "color": "#E53E3E" }],
+          "properties": { "label": "Delete Record", "labelColor": "#FFFFFF", "fontSize": 16, "fontWeight": 600 }
+        },
+        {
+          "name": "Ghost",
+          "width": 200, "height": 52,
+          "cornerRadius": 12,
+          "fills": [],
+          "properties": { "label": "Cancel", "labelColor": "#2D6A4F", "fontSize": 16, "fontWeight": 600 }
+        }
+      ]
+    },
+    "Input": {
+      "variants": [
+        {
+          "name": "Default",
+          "width": 327, "height": 48,
+          "cornerRadius": 8,
+          "fills": [{ "type": "SOLID", "color": "#F7F9F7" }],
+          "strokes": [{ "type": "SOLID", "color": "#E2E8F0", "weight": 1.5 }]
+        },
+        {
+          "name": "Focused",
+          "width": 327, "height": 48,
+          "cornerRadius": 8,
+          "fills": [{ "type": "SOLID", "color": "#FFFFFF" }],
+          "strokes": [{ "type": "SOLID", "color": "#6BCB77", "weight": 2 }]
+        },
+        {
+          "name": "Error",
+          "width": 327, "height": 48,
+          "cornerRadius": 8,
+          "fills": [{ "type": "SOLID", "color": "#FFF5F5" }],
+          "strokes": [{ "type": "SOLID", "color": "#E53E3E", "weight": 2 }]
+        }
+      ]
+    },
+    "Badge": {
+      "variants": [
+        { "name": "Active",    "fill": "#C6F6D5", "textColor": "#276749", "label": "Active" },
+        { "name": "Pending",   "fill": "#FEEBC8", "textColor": "#C05621", "label": "Pending" },
+        { "name": "Alert",     "fill": "#FED7D7", "textColor": "#C53030", "label": "Alert" },
+        { "name": "Cancelled", "fill": "#EDF2F7", "textColor": "#4A5568", "label": "Cancelled" }
+      ],
+      "cornerRadius": 9999,
+      "paddingH": 12,
+      "paddingV": 4,
+      "fontSize": 12,
+      "fontWeight": 600
+    },
+    "Card": {
+      "variants": [
+        { "name": "Default",  "fill": "#FFFFFF", "stroke": "#E2E8F0", "strokeWeight": 1.5, "effect": "Shadow/Card" },
+        { "name": "Elevated", "fill": "#FFFFFF", "stroke": null, "effect": "Shadow/Elevated" },
+        { "name": "Alert",    "fill": "#FFF5F5", "stroke": "#E53E3E", "strokeWeight": 1.5 },
+        { "name": "Success",  "fill": "#F0FBF1", "stroke": "#6BCB77", "strokeWeight": 1.5 }
+      ],
+      "cornerRadius": 12,
+      "padding": 16
+    },
+    "ChecklistItem": {
+      "variants": [
+        { "name": "Unchecked", "fill": "#F7F9F7", "checkboxFill": "#FFFFFF", "checkboxStroke": "#E2E8F0" },
+        { "name": "Checked",   "fill": "#F0FBF1", "checkboxFill": "#6BCB77", "checkmark": true }
+      ],
+      "height": 48,
+      "cornerRadius": 8
+    },
+    "Avatar": {
+      "variants": [
+        { "name": "Barista1", "initials": "B1", "fill": "#6BCB77" },
+        { "name": "Barista2", "initials": "B2", "fill": "#6BCB77" },
+        { "name": "Owner",    "initials": "OW", "fill": "#2D6A4F" }
+      ],
+      "sizes": { "sm": 32, "md": 40, "lg": 56 },
+      "textColor": "#FFFFFF",
+      "fontWeight": 700
+    },
+    "Toggle": {
+      "variants": [
+        { "name": "Off", "trackFill": "#CBD5E0", "thumbFill": "#FFFFFF" },
+        { "name": "On",  "trackFill": "#6BCB77", "thumbFill": "#FFFFFF" }
+      ],
+      "width": 48, "height": 28
+    },
+    "BottomNav": {
+      "height": 64,
+      "fill": "#FFFFFF",
+      "stroke": "#E2E8F0",
+      "items": [
+        { "label": "Home",     "icon": "home" },
+        { "label": "Shift",    "icon": "clipboard" },
+        { "label": "Expenses", "icon": "currency" },
+        { "label": "Profile",  "icon": "person" }
+      ],
+      "activeColor": "#6BCB77",
+      "inactiveColor": "#718096",
+      "indicatorHeight": 3
+    },
+    "StepProgress": {
+      "trackFill": "#E2E8F0",
+      "fillColor": "#6BCB77",
+      "height": 6,
+      "cornerRadius": 3
+    },
+    "MetricCard": {
+      "width": 155, "height": 90,
+      "fill": "#FFFFFF",
+      "stroke": "#E2E8F0",
+      "cornerRadius": 12,
+      "labelStyle": "Label/Default",
+      "valueStyle": "Metric/Large"
+    },
+    "AlertBanner": {
+      "variants": [
+        { "name": "Danger",  "fill": "#FFF5F5", "stroke": "#E53E3E", "accent": "#E53E3E" },
+        { "name": "Warning", "fill": "#FFFAF0", "stroke": "#F6AD55", "accent": "#F6AD55" },
+        { "name": "Success", "fill": "#F0FFF4", "stroke": "#6BCB77", "accent": "#6BCB77" }
+      ],
+      "cornerRadius": 8,
+      "accentWidth": 4
+    },
+    "PhotoUploadBox": {
+      "fill": "#F7F9F7",
+      "stroke": "#E2E8F0",
+      "strokeDash": [6, 4],
+      "cornerRadius": 12,
+      "width": 327, "height": 120
+    },
+    "PINPad": {
+      "keySize": 88,
+      "keyCornerRadius": 12,
+      "keyFill": "#F7F9F7",
+      "keyStroke": "#E2E8F0",
+      "deleteFill": "#FFF5F5",
+      "deleteStroke": "#E53E3E",
+      "confirmFill": "#6BCB77",
+      "dotSize": 10,
+      "dotActiveFill": "#2D6A4F",
+      "dotInactiveFill": "#E2E8F0"
+    }
+  },
+  "screens": {
+    "mobile": [
+      { "name": "SplashScreen",          "file": "screens/mobile/splash-screen.svg",        "width": 375, "height": 812, "route": "/" },
+      { "name": "UserSelectScreen",      "file": "screens/mobile/user-select.svg",           "width": 375, "height": 812, "route": "/select" },
+      { "name": "PINScreen",             "file": "screens/mobile/pin-screen.svg",            "width": 375, "height": 812, "route": "/pin" },
+      { "name": "BaristaHomeScreen",     "file": "screens/mobile/barista-home.svg",          "width": 375, "height": 812, "route": "/home" },
+      { "name": "ShiftFormChecklist",    "file": "screens/mobile/shift-form-checklist.svg",  "width": 375, "height": 812, "route": "/shift/step1" },
+      { "name": "ShiftFormCash",         "file": "screens/mobile/shift-form-cash.svg",       "width": 375, "height": 812, "route": "/shift/step4" },
+      { "name": "ShiftSubmit",           "file": "screens/mobile/shift-submit.svg",          "width": 375, "height": 812, "route": "/shift/submit" },
+      { "name": "ExpenseScreen",         "file": "screens/mobile/expense-screen.svg",        "width": 375, "height": 812, "route": "/expenses/new" },
+      { "name": "ProfileScreen",         "file": "screens/mobile/profile-screen.svg",        "width": 375, "height": 812, "route": "/profile" },
+      { "name": "OwnerDashboard",        "file": "screens/mobile/owner-dashboard.svg",       "width": 375, "height": 812, "route": "/owner" },
+      { "name": "ShiftsScreen",          "file": "screens/mobile/shifts-screen.svg",         "width": 375, "height": 812, "route": "/owner/shifts" },
+      { "name": "FinanceEntry",          "file": "screens/mobile/finance-entry.svg",         "width": 375, "height": 812, "route": "/owner/finance" },
+      { "name": "DiscrepancyScreen",     "file": "screens/mobile/discrepancy-screen.svg",    "width": 375, "height": 812, "route": "/owner/discrepancy" },
+      { "name": "MonthlyReport",         "file": "screens/mobile/monthly-report.svg",        "width": 375, "height": 812, "route": "/owner/reports" },
+      { "name": "ExpensesOwner",         "file": "screens/mobile/expenses-owner.svg",        "width": 375, "height": 812, "route": "/owner/expenses" },
+      { "name": "MembershipsScreen",     "file": "screens/mobile/memberships-screen.svg",    "width": 375, "height": 812, "route": "/owner/memberships" },
+      { "name": "MembershipDetail",      "file": "screens/mobile/membership-detail.svg",     "width": 375, "height": 812, "route": "/owner/memberships/:id" },
+      { "name": "HRScreen",              "file": "screens/mobile/hr-screen.svg",             "width": 375, "height": 812, "route": "/owner/hr" },
+      { "name": "SettingsScreen",        "file": "screens/mobile/settings-screen.svg",       "width": 375, "height": 812, "route": "/owner/settings" }
+    ],
+    "web": [
+      { "name": "LandingPage",      "file": "screens/web/landing-page.svg",       "width": 1280, "height": 900, "route": "/" },
+      { "name": "MenuPage",         "file": "screens/web/menu-page.svg",          "width": 1280, "height": 900, "route": "/menu" },
+      { "name": "CorporatePage",    "file": "screens/web/corporate-page.svg",     "width": 1280, "height": 900, "route": "/corporate" },
+      { "name": "AboutPage",        "file": "screens/web/about-page.svg",         "width": 1280, "height": 900, "route": "/about" },
+      { "name": "StaffDashboard",   "file": "screens/web/staff-dashboard.svg",    "width": 1280, "height": 900, "route": "/app/dashboard" },
+      { "name": "MonthlyReportWeb", "file": "screens/web/monthly-report-web.svg", "width": 1280, "height": 900, "route": "/app/reports" },
+      { "name": "FinanceWeb",       "file": "screens/web/finance-web.svg",        "width": 1280, "height": 900, "route": "/app/finance" }
+    ]
+  },
+  "figmaImport": {
+    "instructions": "See design/README.md for full Figma import guide.",
+    "pluginCompatible": ["Tokens Studio for Figma", "Figma Tokens", "Style Dictionary"],
+    "steps": [
+      "1. Install 'Tokens Studio for Figma' plugin",
+      "2. Open plugin → Import → paste tokens.json contents",
+      "3. Apply tokens to your Figma document",
+      "4. Import SVG screens via File → Place Image for each SVG",
+      "5. Use component definitions above to rebuild as Figma components"
+    ]
+  }
+}

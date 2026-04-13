@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="40" viewBox="0 0 320 40">
+  <!-- Badges: Active, Pending, Alert, Cancelled -->
+
+  <!-- Active -->
+  <rect x="0" y="8" width="70" height="26" rx="13" fill="#C6F6D5"/>
+  <text x="35" y="25" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#276749" text-anchor="middle">Active</text>
+
+  <!-- Pending -->
+  <rect x="82" y="8" width="74" height="26" rx="13" fill="#FEEBC8"/>
+  <text x="119" y="25" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#C05621" text-anchor="middle">Pending</text>
+
+  <!-- Alert -->
+  <rect x="168" y="8" width="60" height="26" rx="13" fill="#FED7D7"/>
+  <text x="198" y="25" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#C53030" text-anchor="middle">Alert</text>
+
+  <!-- Cancelled -->
+  <rect x="240" y="8" width="80" height="26" rx="13" fill="#EDF2F7"/>
+  <text x="280" y="25" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#4A5568" text-anchor="middle">Cancelled</text>
+</svg>

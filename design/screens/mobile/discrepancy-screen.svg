@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812">
+  <!-- Discrepancy Review Screen -->
+  <rect width="375" height="812" fill="#FFFFFF"/>
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1A202C">9:41</text>
+  <text x="188" y="80" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1A202C" text-anchor="middle">Cash Discrepancy</text>
+  <text x="188" y="100" font-family="Inter, sans-serif" font-size="13" fill="#718096" text-anchor="middle">AM Shift · April 12</text>
+
+  <!-- Alert badge -->
+  <rect x="113" y="116" width="149" height="28" rx="14" fill="#FED7D7"/>
+  <text x="188" y="134" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#C53030" text-anchor="middle">⚠ SHORT BY NPR 400</text>
+
+  <!-- Side-by-side comparison -->
+  <rect x="24" y="160" width="153" height="120" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="100" y="188" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" text-anchor="middle">POS TOTAL</text>
+  <text x="100" y="224" font-family="Inter, sans-serif" font-size="26" font-weight="700" fill="#1A202C" text-anchor="middle">13,200</text>
+  <text x="100" y="252" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="middle">System reported</text>
+  <text x="100" y="270" font-family="Inter, sans-serif" font-size="11" fill="#718096" text-anchor="middle">NPR</text>
+
+  <rect x="197" y="160" width="154" height="120" rx="12" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <text x="274" y="188" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" text-anchor="middle">BARISTA TOTAL</text>
+  <text x="274" y="224" font-family="Inter, sans-serif" font-size="26" font-weight="700" fill="#E53E3E" text-anchor="middle">12,800</text>
+  <text x="274" y="252" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="middle">Barista reported</text>
+  <text x="274" y="270" font-family="Inter, sans-serif" font-size="11" fill="#718096" text-anchor="middle">NPR</text>
+
+  <!-- Breakdown -->
+  <rect x="24" y="296" width="327" height="160" rx="12" fill="#F7F9F7"/>
+  <text x="40" y="320" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#1A202C">Breakdown</text>
+  <line x1="40" y1="330" x2="335" y2="330" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="40" y="352" font-family="Inter, sans-serif" font-size="13" fill="#718096">POS Cash</text>
+  <text x="335" y="352" font-family="Inter, sans-serif" font-size="13" fill="#1A202C" text-anchor="end">NPR 8,400</text>
+  <text x="40" y="376" font-family="Inter, sans-serif" font-size="13" fill="#718096">Barista Cash</text>
+  <text x="335" y="376" font-family="Inter, sans-serif" font-size="13" fill="#E53E3E" text-anchor="end">NPR 8,000</text>
+  <text x="40" y="400" font-family="Inter, sans-serif" font-size="13" fill="#718096">POS Digital</text>
+  <text x="335" y="400" font-family="Inter, sans-serif" font-size="13" fill="#1A202C" text-anchor="end">NPR 4,800</text>
+  <text x="40" y="424" font-family="Inter, sans-serif" font-size="13" fill="#718096">Barista Digital</text>
+  <text x="335" y="424" font-family="Inter, sans-serif" font-size="13" fill="#1A202C" text-anchor="end">NPR 4,800</text>
+  <text x="40" y="448" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#1A202C">Net Discrepancy</text>
+  <text x="335" y="448" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#E53E3E" text-anchor="end">- NPR 400</text>
+
+  <!-- Owner notes -->
+  <text x="24" y="482" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">OWNER NOTES</text>
+  <rect x="24" y="490" width="327" height="80" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="520" font-family="Inter, sans-serif" font-size="14" fill="#A0AEC0">Add resolution notes...</text>
+
+  <rect x="24" y="588" width="327" height="52" rx="14" fill="#6BCB77"/>
+  <text x="188" y="619" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Mark as Reviewed</text>
+
+  <!-- Bottom nav -->
+  <rect x="0" y="748" width="375" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+</svg>

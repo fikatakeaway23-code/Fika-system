@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812">
+  <!-- Expense Log Screen -->
+  <rect width="375" height="812" fill="#FFFFFF"/>
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1A202C">9:41</text>
+
+  <text x="188" y="80" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#1A202C" text-anchor="middle">Log Expense</text>
+
+  <!-- Expense name -->
+  <text x="24" y="120" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">EXPENSE NAME</text>
+  <rect x="24" y="128" width="327" height="48" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="157" font-family="Inter, sans-serif" font-size="15" fill="#718096">e.g. Milk purchase</text>
+
+  <!-- Category -->
+  <text x="24" y="200" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">CATEGORY</text>
+  <rect x="24" y="208" width="327" height="48" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="237" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Supplies</text>
+  <polyline points="319,228 327,236 335,228" fill="none" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Amount -->
+  <text x="24" y="280" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">AMOUNT (NPR)</text>
+  <rect x="24" y="288" width="327" height="48" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="317" font-family="Inter, sans-serif" font-size="15" fill="#718096">0</text>
+
+  <!-- Paid by -->
+  <text x="24" y="360" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">PAID BY</text>
+  <rect x="24" y="368" width="148" height="48" rx="8" fill="#6BCB77"/>
+  <text x="98" y="397" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Barista 1</text>
+  <rect x="180" y="368" width="171" height="48" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="265" y="397" font-family="Inter, sans-serif" font-size="14" fill="#718096" text-anchor="middle">Shop Cash</text>
+
+  <!-- Notes -->
+  <text x="24" y="440" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096" letter-spacing="0.05em">NOTES (OPTIONAL)</text>
+  <rect x="24" y="448" width="327" height="80" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="477" font-family="Inter, sans-serif" font-size="15" fill="#A0AEC0">Add any notes...</text>
+
+  <!-- Receipt photo -->
+  <rect x="24" y="548" width="327" height="80" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="188" y="588" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#2D6A4F" text-anchor="middle">📷  Attach Receipt Photo</text>
+  <text x="188" y="612" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="middle">Optional but recommended</text>
+
+  <!-- Submit -->
+  <rect x="24" y="648" width="327" height="56" rx="14" fill="#6BCB77"/>
+  <text x="188" y="681" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#FFFFFF" text-anchor="middle">Submit Expense</text>
+
+  <!-- Bottom nav -->
+  <rect x="0" y="748" width="375" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+</svg>

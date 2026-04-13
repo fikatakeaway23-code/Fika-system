@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="100" viewBox="0 0 327 100">
+  <!-- Card: Default -->
+  <rect width="327" height="100" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="16" y="30" font-family="Inter, sans-serif" font-size="13" fill="#718096">Today's Sales</text>
+  <text x="16" y="58" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#1A202C">NPR 12,450</text>
+  <text x="16" y="82" font-family="Inter, sans-serif" font-size="12" fill="#6BCB77">↑ 8% vs yesterday</text>
+</svg>

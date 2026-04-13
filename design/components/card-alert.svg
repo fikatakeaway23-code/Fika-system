@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="100" viewBox="0 0 327 100">
+  <!-- Card: Alert -->
+  <rect width="327" height="100" rx="12" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <text x="16" y="30" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#E53E3E">⚠ Cash Discrepancy Detected</text>
+  <text x="16" y="56" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">POS: NPR 15,200 — Reported: NPR 14,800</text>
+  <text x="16" y="80" font-family="Inter, sans-serif" font-size="13" fill="#E53E3E">Short by NPR 400 — review required</text>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812">
+  <!-- Shifts List Screen (Owner) -->
+  <rect width="375" height="812" fill="#F7F9F7"/>
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1A202C">9:41</text>
+
+  <text x="24" y="80" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#1A202C">All Shifts</text>
+
+  <!-- Filter bar -->
+  <rect x="24" y="100" width="327" height="40" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="50" y="124" font-family="Inter, sans-serif" font-size="14" fill="#718096">🔍  Filter by date or barista</text>
+
+  <!-- Shift rows -->
+  <!-- Today AM -->
+  <rect x="24" y="156" width="327" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="180" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Apr 12 · AM Shift · Barista 1</text>
+  <rect x="40" y="188" width="90" height="22" rx="11" fill="#FED7D7"/>
+  <text x="85" y="203" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#C53030" text-anchor="middle">⚠ Discrepancy</text>
+  <text x="335" y="196" font-family="Inter, sans-serif" font-size="13" fill="#718096" text-anchor="end">NPR 13,000</text>
+  <text x="335" y="220" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">42 drinks</text>
+
+  <!-- Today PM -->
+  <rect x="24" y="248" width="327" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="272" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Apr 12 · PM Shift · Barista 2</text>
+  <rect x="40" y="280" width="80" height="22" rx="11" fill="#FEEBC8"/>
+  <text x="80" y="295" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#C05621" text-anchor="middle">In Progress</text>
+  <text x="335" y="295" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">—</text>
+
+  <!-- Yesterday AM -->
+  <rect x="24" y="340" width="327" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="364" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Apr 11 · AM Shift · Barista 1</text>
+  <rect x="40" y="372" width="86" height="22" rx="11" fill="#C6F6D5"/>
+  <text x="83" y="387" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#276749" text-anchor="middle">✓ Submitted</text>
+  <text x="335" y="380" font-family="Inter, sans-serif" font-size="13" fill="#1A202C" text-anchor="end">NPR 11,800</text>
+  <text x="335" y="400" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">38 drinks</text>
+
+  <!-- Yesterday PM -->
+  <rect x="24" y="432" width="327" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="40" y="456" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C">Apr 11 · PM Shift · Barista 2</text>
+  <rect x="40" y="464" width="86" height="22" rx="11" fill="#C6F6D5"/>
+  <text x="83" y="479" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#276749" text-anchor="middle">✓ Submitted</text>
+  <text x="335" y="472" font-family="Inter, sans-serif" font-size="13" fill="#1A202C" text-anchor="end">NPR 9,450</text>
+  <text x="335" y="492" font-family="Inter, sans-serif" font-size="12" fill="#718096" text-anchor="end">31 drinks</text>
+
+  <!-- Bottom nav owner -->
+  <rect x="0" y="748" width="375" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="112" y="748" width="52" height="3" rx="2" fill="#6BCB77"/>
+  <text x="44" y="800" font-family="Inter, sans-serif" font-size="10" fill="#718096" text-anchor="middle">Dashboard</text>
+  <text x="138" y="800" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#6BCB77" text-anchor="middle">Shifts</text>
+  <text x="235" y="800" font-family="Inter, sans-serif" font-size="10" fill="#718096" text-anchor="middle">Finance</text>
+  <text x="329" y="800" font-family="Inter, sans-serif" font-size="10" fill="#718096" text-anchor="middle">More</text>
+</svg>

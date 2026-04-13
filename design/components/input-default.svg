@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="72" viewBox="0 0 327 72">
+  <!-- Input Field: Default -->
+  <text x="0" y="14" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1A202C" letter-spacing="0.05em">OPENING FLOAT (NPR)</text>
+  <rect y="22" width="327" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="16" y="49" font-family="Inter, sans-serif" font-size="16" fill="#A0AEC0">Enter amount...</text>
+</svg>

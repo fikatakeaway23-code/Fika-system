@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="72" viewBox="0 0 327 72">
+  <!-- Select Dropdown -->
+  <text x="0" y="14" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1A202C" letter-spacing="0.05em">TASTE ASSESSMENT</text>
+  <rect y="22" width="327" height="44" rx="8" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="16" y="49" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Balanced ✓</text>
+  <!-- Chevron down -->
+  <polyline points="299,36 307,44 315,36" fill="none" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+</svg>

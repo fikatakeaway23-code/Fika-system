@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="180" viewBox="0 0 327 180">
+  <!-- Alert Banner: Red -->
+  <rect y="0" width="327" height="52" rx="8" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <rect y="0" width="5" height="52" rx="2" fill="#E53E3E"/>
+  <text x="20" y="21" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#C53030">Cash Discrepancy</text>
+  <text x="20" y="40" font-family="Inter, sans-serif" font-size="12" fill="#742A2A">Barista reported NPR 400 less than POS total</text>
+
+  <!-- Alert Banner: Yellow -->
+  <rect y="64" width="327" height="52" rx="8" fill="#FFFAF0" stroke="#F6AD55" stroke-width="1.5"/>
+  <rect x="0" y="64" width="5" height="52" rx="2" fill="#F6AD55"/>
+  <text x="20" y="85" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#C05621">Shift Not Submitted</text>
+  <text x="20" y="104" font-family="Inter, sans-serif" font-size="12" fill="#7B341E">AM shift report is pending for today</text>
+
+  <!-- Alert Banner: Green -->
+  <rect y="128" width="327" height="52" rx="8" fill="#F0FFF4" stroke="#6BCB77" stroke-width="1.5"/>
+  <rect x="0" y="128" width="5" height="52" rx="2" fill="#6BCB77"/>
+  <text x="20" y="149" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#276749">Shift Submitted</text>
+  <text x="20" y="168" font-family="Inter, sans-serif" font-size="12" fill="#22543D">AM shift completed and synced</text>
+</svg>

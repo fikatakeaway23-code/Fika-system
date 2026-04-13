@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="380" viewBox="0 0 327 380">
+  <!-- PIN Pad Component -->
+  <!-- 4-dot indicator -->
+  <circle cx="119" cy="20" r="8" fill="#E2E8F0"/>
+  <circle cx="147" cy="20" r="8" fill="#E2E8F0"/>
+  <circle cx="175" cy="20" r="8" fill="#E2E8F0"/>
+  <circle cx="203" cy="20" r="8" fill="#E2E8F0"/>
+  <!-- Filled example: 2 dots entered -->
+  <circle cx="119" cy="20" r="8" fill="#2D6A4F"/>
+  <circle cx="147" cy="20" r="8" fill="#2D6A4F"/>
+
+  <!-- Row 1: 1 2 3 -->
+  <rect x="0" y="52" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="48" y="96" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">1</text>
+
+  <rect x="115" y="52" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="163" y="96" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">2</text>
+
+  <rect x="231" y="52" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="279" y="96" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">3</text>
+
+  <!-- Row 2: 4 5 6 -->
+  <rect x="0" y="140" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="48" y="184" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">4</text>
+
+  <rect x="115" y="140" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="163" y="184" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">5</text>
+
+  <rect x="231" y="140" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="279" y="184" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">6</text>
+
+  <!-- Row 3: 7 8 9 -->
+  <rect x="0" y="228" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="48" y="272" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">7</text>
+
+  <rect x="115" y="228" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="163" y="272" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">8</text>
+
+  <rect x="231" y="228" width="96" height="72" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="279" y="272" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">9</text>
+
+  <!-- Row 4: Delete 0 Confirm -->
+  <rect x="0" y="316" width="96" height="60" rx="12" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <text x="48" y="352" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#E53E3E" text-anchor="middle">⌫</text>
+
+  <rect x="115" y="316" width="96" height="60" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="163" y="352" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#1A202C" text-anchor="middle">0</text>
+
+  <rect x="231" y="316" width="96" height="60" rx="12" fill="#6BCB77"/>
+  <text x="279" y="352" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">OK</text>
+</svg>

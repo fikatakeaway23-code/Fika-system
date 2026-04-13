@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="812" viewBox="0 0 375 812">
+  <!-- Shift Submit / Success Screen -->
+  <rect width="375" height="812" fill="#FFFFFF"/>
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1A202C">9:41</text>
+
+  <!-- Success state (post-submit) -->
+  <!-- Green checkmark circle -->
+  <circle cx="188" cy="180" r="56" fill="#C6F6D5"/>
+  <circle cx="188" cy="180" r="40" fill="#6BCB77"/>
+  <polyline points="168,180 182,196 210,162" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="188" y="272" font-family="Inter, sans-serif" font-size="26" font-weight="700" fill="#1A202C" text-anchor="middle">Shift Submitted!</text>
+  <text x="188" y="300" font-family="Inter, sans-serif" font-size="15" fill="#718096" text-anchor="middle">Great work today, Barista 1 ☕</text>
+  <text x="188" y="322" font-family="Inter, sans-serif" font-size="14" fill="#718096" text-anchor="middle">Sat, April 12 · AM Shift</text>
+
+  <!-- Summary stats -->
+  <rect x="24" y="348" width="327" height="200" rx="16" fill="#F7F9F7"/>
+  <text x="40" y="380" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#1A202C">Shift Summary</text>
+  <line x1="40" y1="390" x2="335" y2="390" stroke="#E2E8F0" stroke-width="1"/>
+
+  <text x="40" y="416" font-family="Inter, sans-serif" font-size="14" fill="#718096">Cash Sales</text>
+  <text x="335" y="416" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C" text-anchor="end">NPR 8,200</text>
+
+  <text x="40" y="446" font-family="Inter, sans-serif" font-size="14" fill="#718096">Digital Sales</text>
+  <text x="335" y="446" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C" text-anchor="end">NPR 4,800</text>
+
+  <text x="40" y="476" font-family="Inter, sans-serif" font-size="14" fill="#718096">Drinks Served</text>
+  <text x="335" y="476" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C" text-anchor="end">42</text>
+
+  <text x="40" y="506" font-family="Inter, sans-serif" font-size="14" fill="#718096">Espresso Shots Wasted</text>
+  <text x="335" y="506" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1A202C" text-anchor="end">3</text>
+
+  <line x1="40" y1="518" x2="335" y2="518" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="40" y="540" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#1A202C">Total Revenue</text>
+  <text x="335" y="540" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#2D6A4F" text-anchor="end">NPR 13,000</text>
+
+  <!-- Back to home button -->
+  <rect x="24" y="572" width="327" height="56" rx="14" fill="#6BCB77"/>
+  <text x="188" y="605" font-family="Inter, sans-serif" font-size="17" font-weight="600" fill="#FFFFFF" text-anchor="middle">Back to Home</text>
+
+  <!-- Bottom nav -->
+  <rect x="0" y="748" width="375" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="52" viewBox="0 0 200 52">
+  <!-- Button: Danger -->
+  <rect width="200" height="52" rx="12" fill="#E53E3E"/>
+  <text x="100" y="32" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">Delete Record</text>
+</svg>

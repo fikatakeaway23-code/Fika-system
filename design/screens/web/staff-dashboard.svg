@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+  <!-- Staff Web App — Owner Dashboard (1280px) -->
+  <rect width="1280" height="900" fill="#F7F9F7"/>
+
+  <!-- Sidebar -->
+  <rect width="240" height="900" fill="#2D6A4F"/>
+  <!-- Logo -->
+  <text x="32" y="52" font-family="Inter, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">FIKA</text>
+  <text x="32" y="72" font-family="Inter, sans-serif" font-size="11" fill="#FFFFFF" opacity="0.6">Staff Operations</text>
+
+  <!-- Nav items -->
+  <rect x="12" y="104" width="216" height="44" rx="8" fill="#FFFFFF" opacity="0.15"/>
+  <text x="48" y="130" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">📊  Dashboard</text>
+
+  <text x="48" y="186" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">📋  Shifts</text>
+  <text x="48" y="234" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">💰  Finance</text>
+  <text x="48" y="282" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">💸  Expenses</text>
+  <text x="48" y="330" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">🏢  Memberships</text>
+  <text x="48" y="378" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">👥  HR Records</text>
+  <text x="48" y="426" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">📈  Reports</text>
+  <text x="48" y="474" font-family="Inter, sans-serif" font-size="14" fill="#FFFFFF" opacity="0.7">⚙  Settings</text>
+
+  <!-- Network status -->
+  <circle cx="24" cy="860" r="6" fill="#6BCB77"/>
+  <text x="36" y="864" font-family="Inter, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.7">Online</text>
+
+  <!-- Main content area -->
+  <!-- Header -->
+  <rect x="240" y="0" width="1040" height="64" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="264" y="36" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1A202C">Dashboard</text>
+  <text x="264" y="56" font-family="Inter, sans-serif" font-size="13" fill="#718096">Saturday, April 12, 2026</text>
+  <!-- Sync button -->
+  <rect x="1100" y="16" width="160" height="36" rx="8" fill="#2D6A4F"/>
+  <text x="1180" y="38" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF" text-anchor="middle">↑ Sync to Notion</text>
+
+  <!-- Discrepancy alert banner -->
+  <rect x="264" y="80" width="992" height="52" rx="10" fill="#FFF5F5" stroke="#E53E3E" stroke-width="1.5"/>
+  <rect x="264" y="80" width="4" height="52" rx="2" fill="#E53E3E"/>
+  <text x="282" y="103" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#C53030">⚠ Cash Discrepancy Detected — AM Shift · April 12</text>
+  <text x="282" y="121" font-family="Inter, sans-serif" font-size="13" fill="#742A2A">Barista 1 reported NPR 400 less than POS total. Click to review.</text>
+  <text x="1244" y="110" font-family="Inter, sans-serif" font-size="13" fill="#C53030" text-anchor="end">Review →</text>
+
+  <!-- KPI Cards row -->
+  <rect x="264" y="152" width="228" height="100" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="284" y="180" font-family="Inter, sans-serif" font-size="13" fill="#718096">Today's Revenue</text>
+  <text x="284" y="218" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#1A202C">₨13,000</text>
+  <text x="284" y="240" font-family="Inter, sans-serif" font-size="12" fill="#6BCB77">↑ 8% vs yesterday</text>
+
+  <rect x="512" y="152" width="228" height="100" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="532" y="180" font-family="Inter, sans-serif" font-size="13" fill="#718096">Monthly Revenue</text>
+  <text x="532" y="218" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#1A202C">₨3,24,500</text>
+  <text x="532" y="240" font-family="Inter, sans-serif" font-size="12" fill="#6BCB77">Apr 2026</text>
+
+  <rect x="760" y="152" width="228" height="100" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="780" y="180" font-family="Inter, sans-serif" font-size="13" fill="#718096">Net Profit (Apr)</text>
+  <text x="780" y="218" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#2D6A4F">₨84,300</text>
+  <text x="780" y="240" font-family="Inter, sans-serif" font-size="12" fill="#718096">Margin: 26%</text>
+
+  <rect x="1008" y="152" width="248" height="100" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="1028" y="180" font-family="Inter, sans-serif" font-size="13" fill="#718096">Drinks Sold (Apr)</text>
+  <text x="1028" y="218" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#1A202C">1,284</text>
+  <text x="1028" y="240" font-family="Inter, sans-serif" font-size="12" fill="#718096">Top: Iced Latte (312)</text>
+
+  <!-- Chart area -->
+  <rect x="264" y="272" width="648" height="260" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="284" y="300" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#1A202C">Daily Revenue — Last 30 Days</text>
+  <!-- Chart bars -->
+  <rect x="292" y="480" width="16" height="40" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <rect x="314" y="460" width="16" height="60" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="336" y="440" width="16" height="80" rx="3" fill="#6BCB77" opacity="0.8"/>
+  <rect x="358" y="420" width="16" height="100" rx="3" fill="#6BCB77"/>
+  <rect x="380" y="450" width="16" height="70" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="402" y="430" width="16" height="90" rx="3" fill="#6BCB77" opacity="0.8"/>
+  <rect x="424" y="400" width="16" height="120" rx="3" fill="#2D6A4F"/>
+  <rect x="446" y="415" width="16" height="105" rx="3" fill="#6BCB77" opacity="0.8"/>
+  <rect x="468" y="435" width="16" height="85" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="490" y="410" width="16" height="110" rx="3" fill="#6BCB77"/>
+  <rect x="512" y="425" width="16" height="95" rx="3" fill="#6BCB77" opacity="0.8"/>
+  <rect x="534" y="455" width="16" height="65" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <rect x="556" y="395" width="16" height="125" rx="3" fill="#2D6A4F"/>
+  <rect x="578" y="420" width="16" height="100" rx="3" fill="#6BCB77"/>
+  <rect x="600" y="440" width="16" height="80" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="622" y="460" width="16" height="60" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <rect x="644" y="435" width="16" height="85" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="666" y="445" width="16" height="75" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <rect x="688" y="415" width="16" height="105" rx="3" fill="#6BCB77" opacity="0.8"/>
+  <rect x="710" y="430" width="16" height="90" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="732" y="450" width="16" height="70" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <rect x="754" y="420" width="16" height="100" rx="3" fill="#6BCB77"/>
+  <rect x="776" y="440" width="16" height="80" rx="3" fill="#6BCB77" opacity="0.7"/>
+  <rect x="798" y="475" width="16" height="45" rx="3" fill="#6BCB77" opacity="0.5"/>
+  <rect x="820" y="445" width="16" height="75" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <rect x="842" y="480" width="16" height="40" rx="3" fill="#6BCB77" opacity="0.5"/>
+  <rect x="864" y="460" width="16" height="60" rx="3" fill="#6BCB77" opacity="0.6"/>
+  <line x1="284" y1="500" x2="900" y2="500" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- Expense donut placeholder -->
+  <rect x="932" y="272" width="324" height="260" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="952" y="300" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#1A202C">Expense Breakdown</text>
+  <circle cx="1094" cy="415" r="80" fill="none" stroke="#6BCB77" stroke-width="40" stroke-dasharray="188 314"/>
+  <circle cx="1094" cy="415" r="80" fill="none" stroke="#2D6A4F" stroke-width="40" stroke-dasharray="125 314" stroke-dashoffset="-188"/>
+  <circle cx="1094" cy="415" r="80" fill="none" stroke="#F6AD55" stroke-width="40" stroke-dasharray="63 314" stroke-dashoffset="-313"/>
+  <circle cx="1094" cy="415" r="80" fill="none" stroke="#E53E3E" stroke-width="40" stroke-dasharray="38 314" stroke-dashoffset="-376"/>
+  <!-- Legend -->
+  <rect x="952" y="492" width="12" height="12" rx="2" fill="#6BCB77"/>
+  <text x="970" y="503" font-family="Inter, sans-serif" font-size="12" fill="#718096">Salaries 38%</text>
+  <rect x="1060" y="492" width="12" height="12" rx="2" fill="#2D6A4F"/>
+  <text x="1078" y="503" font-family="Inter, sans-serif" font-size="12" fill="#718096">Rent 25%</text>
+  <rect x="952" y="512" width="12" height="12" rx="2" fill="#F6AD55"/>
+  <text x="970" y="523" font-family="Inter, sans-serif" font-size="12" fill="#718096">Milk 13%</text>
+  <rect x="1060" y="512" width="12" height="12" rx="2" fill="#E53E3E"/>
+  <text x="1078" y="523" font-family="Inter, sans-serif" font-size="12" fill="#718096">Other</text>
+
+  <!-- Shifts status table -->
+  <rect x="264" y="552" width="992" height="180" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="284" y="580" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#1A202C">Today's Shifts</text>
+  <!-- Table header -->
+  <rect x="264" y="592" width="992" height="32" fill="#F7F9F7"/>
+  <text x="284" y="612" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096">SHIFT</text>
+  <text x="460" y="612" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096">BARISTA</text>
+  <text x="640" y="612" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096">CASH</text>
+  <text x="800" y="612" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096">DIGITAL</text>
+  <text x="960" y="612" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#718096">STATUS</text>
+  <!-- Row AM -->
+  <text x="284" y="650" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">AM Shift · 6AM–2PM</text>
+  <text x="460" y="650" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">Barista 1</text>
+  <text x="640" y="650" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">NPR 8,200</text>
+  <text x="800" y="650" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">NPR 4,800</text>
+  <rect x="956" y="634" width="96" height="24" rx="12" fill="#FED7D7"/>
+  <text x="1004" y="650" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#C53030" text-anchor="middle">⚠ Discrepancy</text>
+  <!-- Row PM -->
+  <line x1="284" y1="668" x2="1236" y2="668" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="284" y="704" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">PM Shift · 12PM–8PM</text>
+  <text x="460" y="704" font-family="Inter, sans-serif" font-size="14" fill="#1A202C">Barista 2</text>
+  <text x="640" y="704" font-family="Inter, sans-serif" font-size="14" fill="#718096">—</text>
+  <text x="800" y="704" font-family="Inter, sans-serif" font-size="14" fill="#718096">—</text>
+  <rect x="956" y="688" width="96" height="24" rx="12" fill="#FEEBC8"/>
+  <text x="1004" y="704" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#C05621" text-anchor="middle">In Progress</text>
+</svg>

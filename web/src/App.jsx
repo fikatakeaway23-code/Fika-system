@@ -1,0 +1,57 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { isLoggedIn } from './lib/auth.js';
+
+// Public pages
+import { LandingPage }   from './pages/public/LandingPage.jsx';
+import { MenuPage }      from './pages/public/MenuPage.jsx';
+import { CorporatePage } from './pages/public/CorporatePage.jsx';
+import { AboutPage }     from './pages/public/AboutPage.jsx';
+
+// Auth
+import { LoginPage } from './pages/staff/LoginPage.jsx';
+
+// Staff dashboard
+import { DashboardLayout }   from './pages/staff/DashboardLayout.jsx';
+import { OverviewPage }      from './pages/staff/OverviewPage.jsx';
+import { ShiftsPage }        from './pages/staff/ShiftsPage.jsx';
+import { FinancePage }       from './pages/staff/FinancePage.jsx';
+import { MonthlyReportPage } from './pages/staff/MonthlyReportPage.jsx';
+import { ExpensesPage }      from './pages/staff/ExpensesPage.jsx';
+import { MembershipsPage }   from './pages/staff/MembershipsPage.jsx';
+import { HRPage }            from './pages/staff/HRPage.jsx';
+
+function RequireAuth({ children }) {
+  return isLoggedIn() ? children : <Navigate to="/staff/login" replace />;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path="/"           element={<LandingPage />} />
+        <Route path="/menu"       element={<MenuPage />} />
+        <Route path="/corporate"  element={<CorporatePage />} />
+        <Route path="/about"      element={<AboutPage />} />
+
+        {/* Staff auth */}
+        <Route path="/staff/login" element={<LoginPage />} />
+
+        {/* Staff dashboard — protected */}
+        <Route path="/staff" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
+          <Route index                element={<OverviewPage />} />
+          <Route path="shifts"        element={<ShiftsPage />} />
+          <Route path="finance"       element={<FinancePage />} />
+          <Route path="reports"       element={<MonthlyReportPage />} />
+          <Route path="expenses"      element={<ExpensesPage />} />
+          <Route path="memberships"   element={<MembershipsPage />} />
+          <Route path="hr"            element={<HRPage />} />
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="327" height="48" viewBox="0 0 327 48">
+  <!-- Step Progress Bar: Step 1 of 7 -->
+  <text x="0" y="14" font-family="Inter, sans-serif" font-size="13" fill="#718096">Step 1 of 7</text>
+  <text x="327" y="14" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#2D6A4F" text-anchor="end">Opening Checklist</text>
+
+  <!-- Track -->
+  <rect x="0" y="26" width="327" height="8" rx="4" fill="#E2E8F0"/>
+  <!-- Fill: 1/7 = ~46.7px -->
+  <rect x="0" y="26" width="47" height="8" rx="4" fill="#6BCB77"/>
+</svg>

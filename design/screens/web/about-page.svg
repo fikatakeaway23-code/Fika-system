@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+  <!-- About / Contact Page -->
+  <rect width="1280" height="900" fill="#FFFFFF"/>
+
+  <!-- Navbar -->
+  <rect width="1280" height="72" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="32" y="41" font-family="Inter, sans-serif" font-size="22" font-weight="800" fill="#2D6A4F">FIKA</text>
+  <text x="400" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Menu</text>
+  <text x="480" y="41" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#2D6A4F">About</text>
+  <text x="560" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Corporate</text>
+  <text x="660" y="41" font-family="Inter, sans-serif" font-size="15" fill="#1A202C">Contact</text>
+  <rect x="1060" y="16" width="196" height="40" rx="20" fill="#6BCB77"/>
+  <text x="1158" y="40" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Order via WhatsApp</text>
+
+  <!-- About hero -->
+  <rect x="0" y="72" width="1280" height="280" fill="#2D6A4F"/>
+  <text x="120" y="176" font-family="Inter, sans-serif" font-size="48" font-weight="800" fill="#FFFFFF">About Fika</text>
+  <text x="120" y="224" font-family="Inter, sans-serif" font-size="18" fill="#FFFFFF" opacity="0.85">We are two 20-year-old founders who started Fika Takeaway because</text>
+  <text x="120" y="252" font-family="Inter, sans-serif" font-size="18" fill="#FFFFFF" opacity="0.85">Kathmandu deserved better, faster, more consistent coffee —</text>
+  <text x="120" y="280" font-family="Inter, sans-serif" font-size="18" fill="#FFFFFF" opacity="0.85">without the café price tag. Every cup is calibrated. We are Fika.</text>
+
+  <!-- Find us section -->
+  <text x="120" y="396" font-family="Inter, sans-serif" font-size="36" font-weight="800" fill="#1A202C">Find Us</text>
+
+  <!-- Map placeholder -->
+  <rect x="120" y="416" width="600" height="320" rx="16" fill="#E8F4F0" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="420" y="556" font-family="Inter, sans-serif" font-size="18" fill="#718096" text-anchor="middle">[ Google Maps Embed ]</text>
+  <text x="420" y="584" font-family="Inter, sans-serif" font-size="14" fill="#718096" text-anchor="middle">Dillibazar, Kathmandu, Nepal</text>
+
+  <!-- Contact info -->
+  <text x="780" y="450" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1A202C">Get in Touch</text>
+
+  <rect x="780" y="470" width="380" height="68" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="800" y="498" font-family="Inter, sans-serif" font-size="14" fill="#718096">📍 Location</text>
+  <text x="800" y="522" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1A202C">Dillibazar, Kathmandu, Nepal</text>
+
+  <rect x="780" y="552" width="380" height="68" rx="12" fill="#F7F9F7" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="800" y="580" font-family="Inter, sans-serif" font-size="14" fill="#718096">⏰ Hours</text>
+  <text x="800" y="604" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1A202C">6:00 AM – 8:00 PM, Daily</text>
+
+  <!-- Social buttons -->
+  <rect x="780" y="640" width="180" height="52" rx="12" fill="#25D366"/>
+  <text x="870" y="670" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">WhatsApp Us</text>
+
+  <rect x="976" y="640" width="180" height="52" rx="12" fill="#E1306C"/>
+  <text x="1066" y="670" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">@fika.takeaway</text>
+
+  <rect x="780" y="704" width="376" height="52" rx="12" fill="#010101"/>
+  <text x="968" y="734" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">TikTok @chattyang</text>
+
+  <!-- Footer -->
+  <rect x="0" y="820" width="1280" height="80" fill="#1A202C"/>
+  <text x="120" y="856" font-family="Inter, sans-serif" font-size="18" font-weight="800" fill="#6BCB77">FIKA</text>
+  <text x="120" y="878" font-family="Inter, sans-serif" font-size="13" fill="#718096">Fast · Fresh · Consistent · Friendly</text>
+  <text x="640" y="865" font-family="Inter, sans-serif" font-size="13" fill="#718096" text-anchor="middle">© 2026 Fika Takeaway · Dillibazar, Kathmandu</text>
+  <text x="1160" y="856" font-family="Inter, sans-serif" font-size="13" fill="#718096" text-anchor="end">Instagram · TikTok · WhatsApp</text>
+</svg>
