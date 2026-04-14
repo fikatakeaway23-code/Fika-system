@@ -82,3 +82,41 @@ export const reportApi = {
   weekly:  ()     => api.get('/reports/weekly'),
   drinks:  (p)    => api.get('/reports/drinks', { params: p }),
 };
+
+export const menuApi = {
+  getAll:   (params)   => api.get('/menu', { params }),
+  create:   (data)     => api.post('/menu', data),
+  update:   (id, data) => api.put(`/menu/${id}`, data),
+  delete:   (id)       => api.delete(`/menu/${id}`),
+  toggle:   (id)       => api.patch(`/menu/${id}/toggle`),
+};
+
+export const announcementApi = {
+  getActive: ()        => api.get('/announcements'),
+  getAll:    ()        => api.get('/announcements/all'),
+  create:    (data)    => api.post('/announcements', data),
+  update:    (id, data)=> api.put(`/announcements/${id}`, data),
+  delete:    (id)      => api.delete(`/announcements/${id}`),
+};
+
+export const equipmentApi = {
+  getAll:  (params)    => api.get('/equipment', { params }),
+  create:  (data)      => api.post('/equipment', data),
+  update:  (id, data)  => api.put(`/equipment/${id}`, data),
+  delete:  (id)        => api.delete(`/equipment/${id}`),
+};
+
+export const targetApi = {
+  getAll:     (params) => api.get('/targets', { params }),
+  getProgress:()       => api.get('/targets/progress'),
+  create:     (data)   => api.post('/targets', data),
+  update:     (id, d)  => api.put(`/targets/${id}`, d),
+  delete:     (id)     => api.delete(`/targets/${id}`),
+};
+
+export const supplierApi = {
+  getAll:  (params)    => api.get('/suppliers', { params }),
+  create:  (data)      => api.post('/suppliers', data),
+  update:  (id, data)  => api.put(`/suppliers/${id}`, data),
+  delete:  (id)        => api.delete(`/suppliers/${id}`),
+};

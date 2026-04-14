@@ -18,8 +18,13 @@ import { ShiftsPage }        from './pages/staff/ShiftsPage.jsx';
 import { FinancePage }       from './pages/staff/FinancePage.jsx';
 import { MonthlyReportPage } from './pages/staff/MonthlyReportPage.jsx';
 import { ExpensesPage }      from './pages/staff/ExpensesPage.jsx';
-import { MembershipsPage }   from './pages/staff/MembershipsPage.jsx';
-import { HRPage }            from './pages/staff/HRPage.jsx';
+import { MembershipsPage }      from './pages/staff/MembershipsPage.jsx';
+import { HRPage }               from './pages/staff/HRPage.jsx';
+import { MenuManagementPage }   from './pages/staff/MenuManagementPage.jsx';
+import { AnnouncementsPage }    from './pages/staff/AnnouncementsPage.jsx';
+import { EquipmentPage }        from './pages/staff/EquipmentPage.jsx';
+import { TargetsPage }          from './pages/staff/TargetsPage.jsx';
+import { SuppliersPage }        from './pages/staff/SuppliersPage.jsx';
 
 function RequireAuth({ children }) {
   return isLoggedIn() ? children : <Navigate to="/staff/login" replace />;
@@ -47,6 +52,11 @@ export default function App() {
           <Route path="expenses"      element={<ExpensesPage />} />
           <Route path="memberships"   element={<MembershipsPage />} />
           <Route path="hr"            element={<HRPage />} />
+          <Route path="menu"          element={<MenuManagementPage />} />
+          <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="equipment"     element={<EquipmentPage />} />
+          <Route path="targets"       element={<TargetsPage />} />
+          <Route path="suppliers"     element={<SuppliersPage />} />
         </Route>
 
         {/* Fallback */}

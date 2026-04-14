@@ -13,7 +13,9 @@
       ]
     }
   ],
-  "env": {
-    "VITE_API_URL": "https://desirable-vision-production-b9ee.up.railway.app"
+  "build": {
+    "env": {
+      "VITE_API_URL": "https://desirable-vision-production-b9ee.up.railway.app"
+    }
   }
 }

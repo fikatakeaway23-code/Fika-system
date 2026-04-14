@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
-import { reportApi, financeApi, shiftApi } from '../../lib/api.js';
+import { reportApi, financeApi, shiftApi, announcementApi, targetApi } from '../../lib/api.js';
 import { getUser, isOwner } from '../../lib/auth.js';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -43,6 +43,22 @@ export function OverviewPage() {
     staleTime: 60_000,
   });
 
+  const { data: announcementsData } = useQuery({
+    queryKey: ['announcements-overview'],
+    queryFn: () => announcementApi.getActive().then((r) => r.data),
+    staleTime: 120_000,
+  });
+
+  const { data: targetProgress } = useQuery({
+    queryKey: ['target-progress-overview'],
+    queryFn: () => targetApi.getProgress().then((r) => r.data),
+    staleTime: 120_000,
+  });
+
+  const pinnedAnnouncements = (announcementsData?.data ?? []).filter(a => a.pinned).slice(0, 3);
+  const allAnnouncements = (announcementsData?.data ?? []).slice(0, 5);
+  const monthProgress = targetProgress?.data?.monthly;
+
   const todayData  = weekly?.days?.find((d) => d.date === today);
   const todaySales = todayData?.revenue    ?? 0;
   const todayDrinks = todayData?.drinksCount ?? 0;
@@ -65,7 +81,7 @@ export function OverviewPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">{greeting}, {user?.name ?? 'there'} 👋</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900">{greeting}, {user?.name ?? 'there'}</h1>
           <p className="text-muted text-sm mt-0.5">{format(new Date(), 'EEEE, d MMMM yyyy')}</p>
         </div>
       </div>
@@ -73,12 +89,59 @@ export function OverviewPage() {
       {/* Discrepancy alert */}
       {owner && discrepancies?.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-          <span className="text-xl">⚠️</span>
           <div>
             <p className="font-bold text-red-700">{discrepancies.length} cash discrepanc{discrepancies.length === 1 ? 'y' : 'ies'} detected</p>
             <p className="text-sm text-red-600">Review in the Finance tab.</p>
           </div>
-          <Link to="/staff/finance" className="ml-auto text-sm font-bold text-red-700 hover:underline">Review →</Link>
+          <Link to="/staff/finance" className="ml-auto text-sm font-bold text-red-700 hover:underline">Review</Link>
+        </div>
+      )}
+
+      {/* Pinned announcements */}
+      {pinnedAnnouncements.length > 0 && (
+        <div className="space-y-2">
+          {pinnedAnnouncements.map(a => (
+            <div key={a.id} className={`border rounded-xl px-4 py-3 flex items-start gap-3 ${
+              a.priority === 'urgent' ? 'bg-red-50 border-red-200' :
+              a.priority === 'important' ? 'bg-yellow-50 border-yellow-200' :
+              'bg-blue-50 border-blue-200'
+            }`}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    a.priority === 'urgent' ? 'bg-red-100 text-red-700' :
+                    a.priority === 'important' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>{a.priority.charAt(0).toUpperCase() + a.priority.slice(1)}</span>
+                  <span className="text-xs font-bold text-gray-700">{a.title}</span>
+                </div>
+                <p className="text-sm text-gray-600 truncate">{a.body}</p>
+              </div>
+              <Link to="/staff/announcements" className="text-xs font-semibold text-secondary flex-shrink-0">View</Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Monthly target progress */}
+      {monthProgress?.target && (
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs font-bold text-muted uppercase tracking-wider">Monthly Target</p>
+              <p className="text-lg font-extrabold text-gray-900">NPR {(monthProgress.actual ?? 0).toLocaleString()} <span className="text-sm font-semibold text-muted">of NPR {(monthProgress.target?.targetAmount ?? 0).toLocaleString()}</span></p>
+            </div>
+            <div className="text-right">
+              <p className={`text-2xl font-extrabold ${monthProgress.progress >= 100 ? 'text-green-600' : monthProgress.progress >= 75 ? 'text-secondary' : monthProgress.progress >= 50 ? 'text-yellow-600' : 'text-red-500'}`}>
+                {monthProgress.progress !== null ? `${monthProgress.progress}%` : '—'}
+              </p>
+              <Link to="/staff/targets" className="text-xs text-secondary font-semibold">Details</Link>
+            </div>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-2">
+            <div className={`h-2 rounded-full transition-all ${monthProgress.progress >= 100 ? 'bg-green-500' : monthProgress.progress >= 75 ? 'bg-secondary' : monthProgress.progress >= 50 ? 'bg-yellow-400' : 'bg-red-400'}`}
+              style={{ width: `${Math.min(monthProgress.progress ?? 0, 100)}%` }} />
+          </div>
         </div>
       )}
 

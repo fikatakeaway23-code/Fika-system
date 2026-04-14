@@ -407,6 +407,142 @@ model HRRecord {
 }
 
 // ─────────────────────────────────────────────
+// Menu Items
+// ─────────────────────────────────────────────
+
+enum MenuCategory {
+  espresso
+  filter
+  cold
+  matcha
+  tea
+  smoothie
+  food
+  other
+}
+
+model MenuItem {
+  id          String       @id @default(cuid())
+  name        String
+  category    MenuCategory
+  price       Float
+  description String?
+  available   Boolean      @default(true)
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("menu_items")
+}
+
+// ─────────────────────────────────────────────
+// Announcements / Notice Board
+// ─────────────────────────────────────────────
+
+enum AnnouncementPriority {
+  normal
+  important
+  urgent
+}
+
+model Announcement {
+  id        String               @id @default(cuid())
+  title     String
+  body      String
+  priority  AnnouncementPriority @default(normal)
+  pinned    Boolean              @default(false)
+  expiresAt DateTime?
+  createdBy String               // user id
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@map("announcements")
+}
+
+// ─────────────────────────────────────────────
+// Equipment Log
+// ─────────────────────────────────────────────
+
+enum EquipmentStatus {
+  open
+  in_progress
+  resolved
+}
+
+model EquipmentLog {
+  id           String          @id @default(cuid())
+  equipment    String          // e.g. "Espresso machine", "Grinder", "Fridge"
+  issue        String
+  status       EquipmentStatus @default(open)
+  reportedBy   String          // user id
+  reportedAt   DateTime        @default(now())
+  resolvedAt   DateTime?
+  resolvedBy   String?
+  repairCost   Float?
+  technicianName String?
+  notes        String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@map("equipment_logs")
+}
+
+// ─────────────────────────────────────────────
+// Sales Targets
+// ─────────────────────────────────────────────
+
+enum TargetPeriod {
+  daily
+  monthly
+}
+
+model SalesTarget {
+  id           String       @id @default(cuid())
+  period       TargetPeriod
+  targetAmount Float
+  drinksTarget Int?
+  month        Int?         // 1-12 (for monthly targets)
+  year         Int
+  day          DateTime?    @db.Date  // for daily targets
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@map("sales_targets")
+}
+
+// ─────────────────────────────────────────────
+// Supplier Directory
+// ─────────────────────────────────────────────
+
+enum SupplierCategory {
+  coffee
+  milk
+  food
+  packaging
+  equipment
+  cleaning
+  other
+}
+
+model Supplier {
+  id            String           @id @default(cuid())
+  name          String
+  category      SupplierCategory
+  contactPerson String?
+  phone         String?
+  email         String?
+  address       String?
+  paymentTerms  String?          // e.g. "Net 30", "Cash on delivery"
+  notes         String?
+  lastOrderDate DateTime?        @db.Date
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@map("suppliers")
+}
+
+// ─────────────────────────────────────────────
 // Notion Sync Log
 // ─────────────────────────────────────────────
 

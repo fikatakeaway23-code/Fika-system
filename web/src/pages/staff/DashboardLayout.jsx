@@ -3,16 +3,21 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { clearSession, getUser, isOwner } from '../../lib/auth.js';
 
 const BASE_LINKS = [
-  { to: '/staff',           label: 'Overview',     emoji: '📊', end: true },
-  { to: '/staff/shifts',    label: 'Shifts',        emoji: '📋' },
-  { to: '/staff/finance',   label: 'Finance',       emoji: '💰' },
-  { to: '/staff/reports',   label: 'Reports',       emoji: '📈' },
-  { to: '/staff/expenses',  label: 'Expenses',      emoji: '💸' },
+  { to: '/staff',                label: 'Overview',       end: true },
+  { to: '/staff/shifts',         label: 'Shifts' },
+  { to: '/staff/finance',        label: 'Finance' },
+  { to: '/staff/reports',        label: 'Reports' },
+  { to: '/staff/expenses',       label: 'Expenses' },
+  { to: '/staff/announcements',  label: 'Announcements' },
+  { to: '/staff/equipment',      label: 'Equipment' },
 ];
 
 const OWNER_LINKS = [
-  { to: '/staff/memberships', label: 'Memberships', emoji: '🏢' },
-  { to: '/staff/hr',          label: 'HR',          emoji: '👥' },
+  { to: '/staff/memberships', label: 'Memberships' },
+  { to: '/staff/hr',          label: 'HR' },
+  { to: '/staff/menu',        label: 'Menu' },
+  { to: '/staff/targets',     label: 'Targets' },
+  { to: '/staff/suppliers',   label: 'Suppliers' },
 ];
 
 export function DashboardLayout() {
@@ -21,7 +26,7 @@ export function DashboardLayout() {
   const owner     = isOwner();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const links = owner ? [...BASE_LINKS, ...OWNER_LINKS] : BASE_LINKS;
+  const links = owner ? [...BASE_LINKS, ...OWNER_LINKS] : [...BASE_LINKS];
 
   function handleLogout() {
     clearSession();
@@ -32,21 +37,20 @@ export function DashboardLayout() {
 
   const NavItems = () => (
     <nav className="flex-1 overflow-y-auto py-4">
-      {links.map(({ to, label, emoji, end }) => (
+      {links.map(({ to, label, end }) => (
         <NavLink
           key={to}
           to={to}
           end={end}
           onClick={() => setSidebarOpen(false)}
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm font-semibold transition-colors mb-0.5 ${
+            `flex items-center px-4 py-2.5 mx-2 rounded-xl text-sm font-semibold transition-colors mb-0.5 ${
               isActive
                 ? 'bg-primary/15 text-secondary'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             }`
           }
         >
-          <span className="text-lg">{emoji}</span>
           {label}
         </NavLink>
       ))}
@@ -59,7 +63,6 @@ export function DashboardLayout() {
       <aside className="hidden md:flex flex-col w-60 bg-white border-r border-gray-100 flex-shrink-0">
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 h-16 border-b border-gray-100 flex-shrink-0">
-          <span className="text-xl">☕</span>
           <span className="font-extrabold text-secondary tracking-widest">FIKA</span>
           <span className="ml-auto text-xs text-muted font-medium">Staff</span>
         </div>
@@ -93,7 +96,7 @@ export function DashboardLayout() {
           <aside className="absolute left-0 top-0 bottom-0 w-64 bg-white flex flex-col">
             <div className="flex items-center justify-between px-4 h-14 border-b border-gray-100">
               <span className="font-extrabold text-secondary tracking-widest">FIKA</span>
-              <button onClick={() => setSidebarOpen(false)} className="p-1 text-muted">✕</button>
+              <button onClick={() => setSidebarOpen(false)} className="p-1 text-muted text-sm font-semibold">Close</button>
             </div>
             <NavItems />
             <div className="border-t border-gray-100 p-4">
@@ -109,8 +112,8 @@ export function DashboardLayout() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile topbar */}
         <header className="md:hidden flex items-center justify-between px-4 h-14 bg-white border-b border-gray-100 flex-shrink-0">
-          <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100">
-            ☰
+          <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 text-sm font-semibold">
+            Menu
           </button>
           <span className="font-extrabold text-secondary tracking-widest">FIKA</span>
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${owner ? 'bg-secondary' : 'bg-primary'}`}>

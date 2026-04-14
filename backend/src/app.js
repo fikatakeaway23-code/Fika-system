@@ -16,6 +16,11 @@ import membershipRoutes from './routes/membership.routes.js';
 import hrRoutes from './routes/hr.routes.js';
 import notionRoutes from './routes/notion.routes.js';
 import reportRoutes from './routes/report.routes.js';
+import menuRoutes from './routes/menu.routes.js';
+import announcementRoutes from './routes/announcement.routes.js';
+import equipmentRoutes from './routes/equipment.routes.js';
+import targetRoutes from './routes/target.routes.js';
+import supplierRoutes from './routes/supplier.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -80,8 +85,13 @@ app.use('/api/finance',     financeRoutes);
 app.use('/api/expenses',    expenseRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/hr',          hrRoutes);
-app.use('/api/notion',      notionRoutes);
-app.use('/api/reports',     reportRoutes);
+app.use('/api/notion',        notionRoutes);
+app.use('/api/reports',       reportRoutes);
+app.use('/api/menu',          menuRoutes);
+app.use('/api/announcements', announcementRoutes);
+app.use('/api/equipment',     equipmentRoutes);
+app.use('/api/targets',       targetRoutes);
+app.use('/api/suppliers',     supplierRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {
