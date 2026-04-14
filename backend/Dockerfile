@@ -8,7 +8,7 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Stage 2: Prisma generate
 FROM node:20-alpine AS prisma
@@ -17,7 +17,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma
 
-RUN npm ci
+RUN npm install
 RUN npx prisma generate
 
 # Stage 3: Production image
