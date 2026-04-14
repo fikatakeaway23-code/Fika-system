@@ -35,6 +35,7 @@ COPY --from=deps   /app/node_modules ./node_modules
 COPY --from=prisma /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=prisma /app/node_modules/@prisma ./node_modules/@prisma
 
+COPY package.json ./
 COPY prisma ./prisma
 COPY src    ./src
 
