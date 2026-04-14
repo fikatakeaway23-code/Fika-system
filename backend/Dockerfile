@@ -4,15 +4,19 @@
 # ─────────────────────────────────────────────
 
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
+FROM node:20-slim AS deps
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
 RUN npm install --only=production
 
 # Stage 2: Prisma generate
-FROM node:20-alpine AS prisma
+FROM node:20-slim AS prisma
 WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
 COPY prisma ./prisma
@@ -21,14 +25,16 @@ RUN npm install
 RUN npx prisma generate
 
 # Stage 3: Production image
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apt-get update -y && apt-get install -y openssl wget && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user
-RUN addgroup --system --gid 1001 fikagroup && \
-    adduser  --system --uid  1001 fikauser
+RUN groupadd --system --gid 1001 fikagroup && \
+    useradd  --system --uid  1001 --gid fikagroup fikauser
 
 # Copy built artifacts
 COPY --from=deps   /app/node_modules ./node_modules
