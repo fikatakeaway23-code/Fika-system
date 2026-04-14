@@ -120,3 +120,25 @@ export const supplierApi = {
   update:  (id, data)  => api.put(`/suppliers/${id}`, data),
   delete:  (id)        => api.delete(`/suppliers/${id}`),
 };
+
+export const stockApi = {
+  getAll:     (params)    => api.get('/stock', { params }),
+  getLowStock: ()         => api.get('/stock/low'),
+  create:     (data)      => api.post('/stock', data),
+  update:     (id, data)  => api.put(`/stock/${id}`, data),
+  adjust:     (id, delta) => api.patch(`/stock/${id}/adjust`, { delta }),
+  delete:     (id)        => api.delete(`/stock/${id}`),
+};
+
+export const wasteApi = {
+  getAll:     (params) => api.get('/waste', { params }),
+  getSummary: (params) => api.get('/waste/summary', { params }),
+  create:     (data)   => api.post('/waste', data),
+  delete:     (id)     => api.delete(`/waste/${id}`),
+};
+
+export const scheduleApi = {
+  getAll:  (params) => api.get('/schedule', { params }),
+  save:    (data)   => api.post('/schedule', data),
+  delete:  (id)     => api.delete(`/schedule/${id}`),
+};

@@ -21,6 +21,9 @@ import announcementRoutes from './routes/announcement.routes.js';
 import equipmentRoutes from './routes/equipment.routes.js';
 import targetRoutes from './routes/target.routes.js';
 import supplierRoutes from './routes/supplier.routes.js';
+import stockRoutes from './routes/stock.routes.js';
+import wasteRoutes from './routes/waste.routes.js';
+import scheduleRoutes from './routes/schedule.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -92,6 +95,9 @@ app.use('/api/announcements', announcementRoutes);
 app.use('/api/equipment',     equipmentRoutes);
 app.use('/api/targets',       targetRoutes);
 app.use('/api/suppliers',     supplierRoutes);
+app.use('/api/stock',         stockRoutes);
+app.use('/api/waste',         wasteRoutes);
+app.use('/api/schedule',      scheduleRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

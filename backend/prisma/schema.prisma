@@ -543,6 +543,85 @@ model Supplier {
 }
 
 // ─────────────────────────────────────────────
+// Stock / Inventory Items
+// ─────────────────────────────────────────────
+
+enum StockCategory {
+  beans
+  milk
+  syrup
+  food
+  packaging
+  cleaning
+  other
+}
+
+model StockItem {
+  id             String        @id @default(cuid())
+  name           String
+  category       StockCategory
+  unit           String        // kg, litre, pieces, boxes, rolls
+  quantity       Float         @default(0)
+  reorderLevel   Float         @default(0)
+  costPerUnit    Float?
+  supplierId     String?
+  notes          String?
+  lastRestockedAt DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("stock_items")
+}
+
+// ─────────────────────────────────────────────
+// Waste Entries (standalone, per-day logging)
+// ─────────────────────────────────────────────
+
+enum WasteReason {
+  expired
+  spilled
+  remade
+  overproduced
+  damaged
+  other
+}
+
+model WasteEntry {
+  id         String      @id @default(cuid())
+  date       DateTime    @db.Date
+  shiftType  String?     // am, pm
+  item       String
+  category   StockCategory
+  quantity   Float
+  unit       String
+  reason     WasteReason
+  cost       Float?
+  notes      String?
+  loggedBy   String      // user id
+  createdAt  DateTime    @default(now())
+
+  @@map("waste_entries")
+}
+
+// ─────────────────────────────────────────────
+// Shift Schedule (upcoming shifts)
+// ─────────────────────────────────────────────
+
+model ShiftSchedule {
+  id         String    @id @default(cuid())
+  date       DateTime  @db.Date
+  shiftType  String    // am, pm
+  staffName  String
+  notes      String?
+  confirmed  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([date, shiftType])
+  @@map("shift_schedules")
+}
+
+// ─────────────────────────────────────────────
 // Notion Sync Log
 // ─────────────────────────────────────────────
 

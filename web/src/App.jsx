@@ -25,6 +25,9 @@ import { AnnouncementsPage }    from './pages/staff/AnnouncementsPage.jsx';
 import { EquipmentPage }        from './pages/staff/EquipmentPage.jsx';
 import { TargetsPage }          from './pages/staff/TargetsPage.jsx';
 import { SuppliersPage }        from './pages/staff/SuppliersPage.jsx';
+import { InventoryPage }        from './pages/staff/InventoryPage.jsx';
+import { WastePage }            from './pages/staff/WastePage.jsx';
+import { SchedulePage }         from './pages/staff/SchedulePage.jsx';
 
 function RequireAuth({ children }) {
   return isLoggedIn() ? children : <Navigate to="/staff/login" replace />;
@@ -57,6 +60,9 @@ export default function App() {
           <Route path="equipment"     element={<EquipmentPage />} />
           <Route path="targets"       element={<TargetsPage />} />
           <Route path="suppliers"     element={<SuppliersPage />} />
+          <Route path="inventory"     element={<InventoryPage />} />
+          <Route path="waste"         element={<WastePage />} />
+          <Route path="schedule"      element={<SchedulePage />} />
         </Route>
 
         {/* Fallback */}
