@@ -1,6 +1,5 @@
 import { prisma } from '../lib/prisma.js';
 import { z } from 'zod';
-import { format } from 'date-fns';
 
 const CATEGORIES = ['beans','milk','syrup','food','packaging','cleaning','other'];
 const REASONS    = ['expired','spilled','remade','overproduced','damaged','other'];

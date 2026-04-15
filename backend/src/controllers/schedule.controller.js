@@ -1,6 +1,5 @@
 import { prisma } from '../lib/prisma.js';
 import { z } from 'zod';
-import { startOfMonth, endOfMonth, addMonths } from 'date-fns';
 
 const scheduleSchema = z.object({
   date:      z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
