@@ -33,6 +33,7 @@ model User {
   financeRecords FinanceRecord[]
   hrRecords     HRRecord[]
   notionSyncs   NotionSync[]
+  checklistCompletions ChecklistCompletion[]
 
   @@map("users")
 }
@@ -631,6 +632,7 @@ model ChecklistCompletion {
   shiftType     String   // am, pm
   checklistType String   // opening, closing
   completedBy   String   // user id
+  completedByUser User   @relation(fields: [completedBy], references: [id])
   items         Json     // { "espresso_machine": true, "fridge_temp": false, ... }
   submittedAt   DateTime @default(now())
 
