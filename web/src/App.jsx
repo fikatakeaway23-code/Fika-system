@@ -28,6 +28,9 @@ import { SuppliersPage }        from './pages/staff/SuppliersPage.jsx';
 import { InventoryPage }        from './pages/staff/InventoryPage.jsx';
 import { WastePage }            from './pages/staff/WastePage.jsx';
 import { SchedulePage }         from './pages/staff/SchedulePage.jsx';
+import { AttendancePage }       from './pages/staff/AttendancePage.jsx';
+import { ChecklistPage }        from './pages/staff/ChecklistPage.jsx';
+import { MyShiftPage }          from './pages/staff/MyShiftPage.jsx';
 
 function RequireAuth({ children }) {
   return isLoggedIn() ? children : <Navigate to="/staff/login" replace />;
@@ -63,6 +66,9 @@ export default function App() {
           <Route path="inventory"     element={<InventoryPage />} />
           <Route path="waste"         element={<WastePage />} />
           <Route path="schedule"      element={<SchedulePage />} />
+          <Route path="attendance"    element={<AttendancePage />} />
+          <Route path="checklist"     element={<ChecklistPage />} />
+          <Route path="my-shift"      element={<MyShiftPage />} />
         </Route>
 
         {/* Fallback */}

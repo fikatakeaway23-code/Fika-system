@@ -6,11 +6,14 @@ const NAV_GROUPS = [
   {
     label: 'Operations',
     links: [
-      { to: '/staff',               label: 'Overview',       end: true },
-      { to: '/staff/shifts',         label: 'Shifts' },
-      { to: '/staff/finance',        label: 'Finance' },
-      { to: '/staff/reports',        label: 'Reports' },
-      { to: '/staff/expenses',       label: 'Expenses' },
+      { to: '/staff',               label: 'Overview',    end: true },
+      { to: '/staff/my-shift',      label: 'My Shift' },
+      { to: '/staff/attendance',    label: 'Attendance' },
+      { to: '/staff/checklist',     label: 'Checklist' },
+      { to: '/staff/shifts',        label: 'Shifts' },
+      { to: '/staff/finance',       label: 'Finance' },
+      { to: '/staff/reports',       label: 'Reports' },
+      { to: '/staff/expenses',      label: 'Expenses' },
     ],
   },
   {
