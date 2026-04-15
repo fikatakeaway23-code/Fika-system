@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd web && npm install && npm run build",
+  "outputDirectory": "web/dist",
+  "rewrites": [
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+  ],
+  "build": {
+    "env": {
+      "VITE_API_URL": "https://desirable-vision-production-b9ee.up.railway.app"
+    }
+  }
+}
