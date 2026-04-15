@@ -24,6 +24,8 @@ import supplierRoutes from './routes/supplier.routes.js';
 import stockRoutes from './routes/stock.routes.js';
 import wasteRoutes from './routes/waste.routes.js';
 import scheduleRoutes from './routes/schedule.routes.js';
+import attendanceRoutes from './routes/attendance.routes.js';
+import checklistRoutes  from './routes/checklist.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -98,6 +100,8 @@ app.use('/api/suppliers',     supplierRoutes);
 app.use('/api/stock',         stockRoutes);
 app.use('/api/waste',         wasteRoutes);
 app.use('/api/schedule',      scheduleRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/checklist',  checklistRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {
