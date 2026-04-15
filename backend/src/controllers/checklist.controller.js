@@ -8,6 +8,12 @@ const saveSchema = z.object({
   items:         z.record(z.boolean()),
 });
 
+const querySchema = z.object({
+  date:          z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  shiftType:     z.enum(['am', 'pm']).optional(),
+  checklistType: z.enum(['opening', 'closing']).optional(),
+});
+
 export async function saveChecklist(req, res, next) {
   try {
     const parsed = saveSchema.safeParse(req.body);
@@ -39,15 +45,20 @@ export async function saveChecklist(req, res, next) {
 
 export async function getChecklist(req, res, next) {
   try {
-    const { date, shiftType, checklistType } = req.query;
+    const parsed = querySchema.safeParse(req.query);
+    if (!parsed.success) {
+      return res.status(400).json({ message: 'Validation error', errors: parsed.error.flatten() });
+    }
+    const { date, shiftType, checklistType } = parsed.data;
 
     const record = await prisma.checklistCompletion.findFirst({
       where: {
         date:          date ? new Date(date) : undefined,
-        shiftType:     shiftType || undefined,
-        checklistType: checklistType || undefined,
+        shiftType:     shiftType ?? undefined,
+        checklistType: checklistType ?? undefined,
         completedBy:   req.user.id,
       },
+      orderBy: { submittedAt: 'desc' },
     });
 
     res.json({ data: record });
