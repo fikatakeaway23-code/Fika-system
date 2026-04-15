@@ -38,7 +38,6 @@ export async function checkIn(req, res, next) {
     if (existing) {
       return res.status(409).json({
         error: 'Already checked in today',
-        record: existing,
       });
     }
 
@@ -64,14 +63,15 @@ export async function checkIn(req, res, next) {
 
 export async function getMyAttendance(req, res, next) {
   try {
-    const { limit = 30 } = req.query;
+    const rawLimit = parseInt(req.query.limit, 10);
+    const take = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, 100) : 30;
     const records = await prisma.hRRecord.findMany({
       where: {
         staffMember: req.user.id,
         recordType:  'attendance',
       },
       orderBy: { date: 'desc' },
-      take:    parseInt(limit),
+      take,
     });
     res.json({ data: records });
   } catch (err) {
