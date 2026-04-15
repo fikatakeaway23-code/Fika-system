@@ -38,7 +38,9 @@ export const shiftApi = {
   getAll:    (params)  => api.get('/shifts',               { params }),
   getByDate: (date)    => api.get(`/shifts/date/${date}`),
   getById:   (id)      => api.get(`/shifts/${id}`),
+  create:    (data)    => api.post('/shifts', data),
   update:    (id, data)=> api.put(`/shifts/${id}`, data),
+  submit:    (id)      => api.post(`/shifts/${id}/submit`),
 };
 
 export const financeApi = {
@@ -141,4 +143,15 @@ export const scheduleApi = {
   getAll:  (params) => api.get('/schedule', { params }),
   save:    (data)   => api.post('/schedule', data),
   delete:  (id)     => api.delete(`/schedule/${id}`),
+};
+
+export const attendanceApi = {
+  checkIn:    ()       => api.post('/attendance/checkin'),
+  getHistory: (params) => api.get('/attendance', { params }),
+};
+
+export const checklistApi = {
+  save:       (data)   => api.post('/checklist', data),
+  get:        (params) => api.get('/checklist',  { params }),
+  getHistory: (params) => api.get('/checklist/history', { params }),
 };
