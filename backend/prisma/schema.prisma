@@ -622,6 +622,23 @@ model ShiftSchedule {
 }
 
 // ─────────────────────────────────────────────
+// Checklist Completions
+// ─────────────────────────────────────────────
+
+model ChecklistCompletion {
+  id            String   @id @default(cuid())
+  date          DateTime @db.Date
+  shiftType     String   // am, pm
+  checklistType String   // opening, closing
+  completedBy   String   // user id
+  items         Json     // { "espresso_machine": true, "fridge_temp": false, ... }
+  submittedAt   DateTime @default(now())
+
+  @@unique([date, shiftType, checklistType, completedBy])
+  @@map("checklist_completions")
+}
+
+// ─────────────────────────────────────────────
 // Notion Sync Log
 // ─────────────────────────────────────────────
 
