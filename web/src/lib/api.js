@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getRefreshToken, clearSession } from './auth.js';
+import { getRefreshToken, setRefreshToken, clearSession } from './auth.js';
 
 const BASE_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -46,7 +46,7 @@ api.interceptors.response.use(
       try {
         const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken: rToken });
         sessionStorage.setItem('fika_token', data.token);
-        sessionStorage.setItem('fika_refresh_token', data.refreshToken);
+        setRefreshToken(data.refreshToken);
         refreshQueue.forEach((p) => p.resolve(data.token));
         refreshQueue = [];
         original.headers.Authorization = `Bearer ${data.token}`;

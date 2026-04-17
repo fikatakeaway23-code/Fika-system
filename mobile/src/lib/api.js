@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { storage } from './storage.js';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -42,10 +43,7 @@ api.interceptors.response.use(
       isRefreshing = true;
       try {
         const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken: rToken });
-        await AsyncStorage.multiSet([
-          ['fika_token', data.token],
-          ['fika_refresh_token', data.refreshToken],
-        ]);
+        await storage.updateTokens(data.token, data.refreshToken);
         refreshQueue.forEach((p) => p.resolve(data.token));
         refreshQueue = [];
         original.headers.Authorization = `Bearer ${data.token}`;

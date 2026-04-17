@@ -11,6 +11,13 @@ const KEYS = {
 
 export const storage = {
   // Auth
+  async updateTokens(token, refreshToken) {
+    await AsyncStorage.multiSet([
+      [KEYS.TOKEN, token],
+      [KEYS.REFRESH_TOKEN, refreshToken],
+    ]);
+  },
+
   async saveAuth(token, user, refreshToken) {
     const pairs = [
       [KEYS.TOKEN, token],
