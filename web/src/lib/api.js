@@ -129,6 +129,12 @@ export const reportApi = {
   drinks:  (p)    => api.get('/reports/drinks', { params: p }),
 };
 
+export const analyticsApi = {
+  mrr:         ()       => api.get('/analytics/mrr'),
+  renewals:    (days)   => api.get('/analytics/renewals', { params: { days } }),
+  leaderboard: (m, y)   => api.get('/analytics/leaderboard', { params: { month: m, year: y } }),
+};
+
 export const menuApi = {
   getAll:   (params)   => api.get('/menu', { params }),
   create:   (data)     => api.post('/menu', data),
