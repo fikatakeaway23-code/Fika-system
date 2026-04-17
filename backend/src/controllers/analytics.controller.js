@@ -6,7 +6,7 @@ export async function getMrr(req, res, next) {
   try {
     const memberships = await prisma.membership.findMany({
       where: { status: 'active' },
-      select: { monthlyFee: true, tier: true, companyName: true },
+      select: { monthlyFee: true, tier: true },
     });
 
     const totalMrr = memberships.reduce((s, m) => s + (m.monthlyFee ?? 0), 0);
