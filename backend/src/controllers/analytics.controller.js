@@ -54,11 +54,13 @@ export async function getRenewals(req, res, next) {
       },
     });
 
-    const withDays = memberships.map((m) => {
-      const diffMs   = new Date(m.renewalDate).getTime() - now.getTime();
-      const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      return { ...m, daysLeft };
-    });
+    const withDays = memberships
+      .filter((m) => m.renewalDate !== null)
+      .map((m) => {
+        const diffMs   = new Date(m.renewalDate).getTime() - now.getTime();
+        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        return { ...m, daysLeft };
+      });
 
     res.json({ renewals: withDays, count: withDays.length });
   } catch (err) {
@@ -77,7 +79,7 @@ export async function getLeaderboard(req, res, next) {
 
     const shifts = await prisma.shift.findMany({
       where: {
-        status: 'submitted',
+        status: { in: ['submitted', 'reviewed'] },
         date: {
           gte: new Date(year, month - 1, 1),
           lt:  new Date(year, month, 1),
@@ -89,7 +91,7 @@ export async function getLeaderboard(req, res, next) {
     const byUser = {};
     for (const s of shifts) {
       if (!byUser[s.userId]) {
-        byUser[s.userId] = { userId: s.userId, name: s.user.name, drinks: 0, shifts: 0 };
+        byUser[s.userId] = { userId: s.userId, name: s.user?.name ?? 'Unknown', drinks: 0, shifts: 0 };
       }
       byUser[s.userId].drinks += s.drinksCount ?? 0;
       byUser[s.userId].shifts += 1;
