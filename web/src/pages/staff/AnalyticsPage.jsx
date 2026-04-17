@@ -26,7 +26,7 @@ function StatCard({ label, value, sub }) {
 
 export function AnalyticsPage() {
   const now = new Date();
-  const [lbDate, setLbDate] = useState(now);
+  const [lbDate, setLbDate] = useState(() => new Date());
   const lbMonth = lbDate.getMonth() + 1;
   const lbYear  = lbDate.getFullYear();
 
@@ -108,8 +108,8 @@ export function AnalyticsPage() {
                     const overdue = m.daysLeft < 0;
                     const urgent  = m.daysLeft >= 0 && m.daysLeft <= 3;
                     const warning = m.daysLeft > 3  && m.daysLeft <= 7;
-                    const badge   = overdue ? 'bg-red-100 text-red-700'
-                      : urgent  ? 'bg-red-100 text-red-600'
+                    const badge   = overdue ? 'bg-red-600 text-white'
+                      : urgent  ? 'bg-red-100 text-red-700'
                       : warning ? 'bg-amber-100 text-amber-700'
                       : 'bg-gray-100 text-gray-600';
                     const label   = overdue ? `${Math.abs(m.daysLeft)}d overdue`
@@ -129,7 +129,7 @@ export function AnalyticsPage() {
                         <td className="px-4 py-2">
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${badge}`}>{label}</span>
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700">NPR {m.monthlyFee?.toLocaleString()}</td>
+                        <td className="px-4 py-2 text-sm text-gray-700">{m.monthlyFee != null ? `NPR ${m.monthlyFee.toLocaleString()}` : '—'}</td>
                       </tr>
                     );
                   })}
