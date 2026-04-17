@@ -152,7 +152,7 @@ export function AnalyticsPage() {
             <span className="text-sm font-medium text-gray-700">{format(lbDate, 'MMMM yyyy')}</span>
             <button
               onClick={() => setLbDate((d) => addMonths(d, 1))}
-              disabled={lbDate >= now}
+              disabled={lbYear === now.getFullYear() && lbMonth === (now.getMonth() + 1)}
               className="text-gray-400 hover:text-gray-700 px-2 py-1 rounded disabled:opacity-30"
             >›</button>
           </div>
