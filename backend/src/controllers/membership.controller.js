@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 
+const TIER_ROLLOVER_CAPS = {
+  daily_pass: 5,
+  team_pack: 8,
+  office_bundle: 10,
+};
+
 const membershipSchema = z.object({
   companyName:   z.string().min(1).max(200),
   contactPerson: z.string().min(1),
@@ -128,6 +134,166 @@ export async function incrementDrinks(req, res, next) {
     });
 
     res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function redeemDrink(req, res, next) {
+  try {
+    const { id } = req.params;
+    const redeemSchema = z.object({
+      count:     z.number().int().min(1).max(10).default(1),
+      notes:     z.string().optional(),
+      drinkType: z.string().optional(),
+    });
+    const { count, notes, drinkType } = redeemSchema.parse(req.body);
+
+    const membership = await prisma.membership.findUnique({ where: { id } });
+    if (!membership) return res.status(404).json({ error: 'Membership not found' });
+    if (membership.status !== 'active') {
+      return res.status(400).json({ error: 'Membership is not active' });
+    }
+    if (membership.drinksRemaining !== null && membership.drinksRemaining < count) {
+      return res.status(400).json({
+        error: 'Insufficient balance',
+        drinksRemaining: membership.drinksRemaining,
+      });
+    }
+
+    const now   = new Date();
+    const month = now.getMonth() + 1;
+    const year  = now.getFullYear();
+
+    const [redemption, updated] = await prisma.$transaction([
+      prisma.drinkRedemption.create({
+        data: {
+          membershipId:     id,
+          count,
+          notes,
+          drinkType,
+          redeemedByUserId: req.user.id,
+          month,
+          year,
+        },
+      }),
+      prisma.membership.update({
+        where: { id },
+        data: {
+          drinksUsed: { increment: count },
+          ...(membership.drinksRemaining !== null && {
+            drinksRemaining: { decrement: count },
+          }),
+        },
+      }),
+    ]);
+
+    res.json({ redemption, membership: updated });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getUsage(req, res, next) {
+  try {
+    const { id } = req.params;
+    const querySchema = z.object({
+      month:  z.coerce.number().int().min(1).max(12).optional(),
+      year:   z.coerce.number().int().min(2020).optional(),
+      limit:  z.coerce.number().int().min(1).max(200).default(50),
+      offset: z.coerce.number().int().min(0).default(0),
+    });
+    const { month, year, limit, offset } = querySchema.parse(req.query);
+
+    const where = { membershipId: id };
+    if (month !== undefined) where.month = month;
+    if (year  !== undefined) where.year  = year;
+
+    const [records, total] = await Promise.all([
+      prisma.drinkRedemption.findMany({
+        where,
+        include: { redeemedBy: { select: { name: true } } },
+        orderBy: { redeemedAt: 'desc' },
+        take:    limit,
+        skip:    offset,
+      }),
+      prisma.drinkRedemption.count({ where }),
+    ]);
+
+    res.json({ records, total, limit, offset });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getUsageSummary(req, res, next) {
+  try {
+    const { id } = req.params;
+    const now = new Date();
+    const querySchema = z.object({
+      month: z.coerce.number().int().min(1).max(12).default(now.getMonth() + 1),
+      year:  z.coerce.number().int().min(2020).default(now.getFullYear()),
+    });
+    const { month, year } = querySchema.parse(req.query);
+
+    const redemptions = await prisma.drinkRedemption.findMany({
+      where:   { membershipId: id, month, year },
+      include: { redeemedBy: { select: { id: true, name: true } } },
+    });
+
+    const totalDrinks = redemptions.reduce((sum, r) => sum + r.count, 0);
+
+    const byDay = {};
+    for (const r of redemptions) {
+      const day = new Date(r.redeemedAt).getDate();
+      byDay[day] = (byDay[day] || 0) + r.count;
+    }
+
+    const byBarista = {};
+    for (const r of redemptions) {
+      const name = r.redeemedBy.name;
+      byBarista[name] = (byBarista[name] || 0) + r.count;
+    }
+
+    res.json({ month, year, totalDrinks, byDay, byBarista });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function renewMembership(req, res, next) {
+  try {
+    const { id } = req.params;
+    const membership = await prisma.membership.findUnique({ where: { id } });
+    if (!membership) return res.status(404).json({ error: 'Membership not found' });
+
+    const TIER_DRINK_LIMITS = { daily_pass: null, team_pack: 30, office_bundle: null };
+    const drinkLimit = membership.drinksPerDay ?? TIER_DRINK_LIMITS[membership.tier];
+
+    const rolloverCap = membership.rolloverCap ?? TIER_ROLLOVER_CAPS[membership.tier] ?? 5;
+    const rolloverEarned =
+      membership.drinksRemaining !== null
+        ? Math.min(membership.drinksRemaining, rolloverCap)
+        : 0;
+
+    const newDrinksRemaining =
+      drinkLimit !== null ? drinkLimit + rolloverEarned : null;
+    const newConsecutive = membership.consecutiveRenewals + 1;
+
+    const updated = await prisma.membership.update({
+      where: { id },
+      data: {
+        drinksUsed:            0,
+        drinksRemaining:       newDrinksRemaining,
+        rolloverDrinks:        rolloverEarned,
+        consecutiveRenewals:   newConsecutive,
+        loyaltyDiscountActive: newConsecutive >= 3,
+        monthsActive:          { increment: 1 },
+        totalRevenue:          { increment: membership.monthlyFee ?? 0 },
+      },
+    });
+
+    res.json({ membership: updated, rolloverEarned, newConsecutive });
   } catch (err) {
     next(err);
   }
