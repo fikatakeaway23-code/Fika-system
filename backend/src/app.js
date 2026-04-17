@@ -26,6 +26,7 @@ import wasteRoutes from './routes/waste.routes.js';
 import scheduleRoutes from './routes/schedule.routes.js';
 import attendanceRoutes from './routes/attendance.routes.js';
 import checklistRoutes  from './routes/checklist.routes.js';
+import memberAuthRouter from './routes/memberAuth.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -102,6 +103,7 @@ app.use('/api/waste',         wasteRoutes);
 app.use('/api/schedule',      scheduleRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/checklist',  checklistRoutes);
+app.use('/api/member',     memberAuthRouter);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {
