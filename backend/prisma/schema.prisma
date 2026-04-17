@@ -34,6 +34,7 @@ model User {
   hrRecords     HRRecord[]
   notionSyncs   NotionSync[]
   checklistCompletions ChecklistCompletion[]
+  drinkRedemptions  DrinkRedemption[] @relation("BaristaRedemptions")
 
   @@map("users")
 }
@@ -311,6 +312,14 @@ model Membership {
   notes         String?
   status        MembershipStatus @default(active)
   joinedDate    DateTime         @db.Date
+
+  rolloverDrinks        Int      @default(0)
+  rolloverCap           Int      @default(5)
+  consecutiveRenewals   Int      @default(0)
+  loyaltyDiscountActive Boolean  @default(false)
+  redemptions           DrinkRedemption[]
+  memberAccount         MemberAccount?
+  topUpRequests         TopUpRequest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -676,4 +685,64 @@ model NotionSync {
   user         User?         @relation(fields: [userId], references: [id])
 
   @@map("notion_syncs")
+}
+
+// ─────────────────────────────────────────────
+// Drink Redemptions
+// ─────────────────────────────────────────────
+
+model DrinkRedemption {
+  id               String     @id @default(cuid())
+  membershipId     String
+  membership       Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  redeemedAt       DateTime   @default(now())
+  count            Int        @default(1)
+  redeemedByUserId String
+  redeemedBy       User       @relation("BaristaRedemptions", fields: [redeemedByUserId], references: [id])
+  notes            String?
+  drinkType        String?
+  month            Int
+  year             Int
+
+  @@map("drink_redemptions")
+}
+
+// ─────────────────────────────────────────────
+// Member Accounts (corporate member portal)
+// ─────────────────────────────────────────────
+
+model MemberAccount {
+  id                 String     @id @default(cuid())
+  email              String     @unique
+  passwordHash       String
+  membershipId       String     @unique
+  membership         Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  lastLoginAt        DateTime?
+  mustChangePassword Boolean    @default(true)
+  qrToken            String     @unique @default(cuid())
+  createdAt          DateTime   @default(now())
+
+  @@map("member_accounts")
+}
+
+// ─────────────────────────────────────────────
+// Top-Up Requests
+// ─────────────────────────────────────────────
+
+enum TopUpStatus {
+  pending
+  acknowledged
+  fulfilled
+}
+
+model TopUpRequest {
+  id             String      @id @default(cuid())
+  membershipId   String
+  membership     Membership  @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  requestedAt    DateTime    @default(now())
+  message        String?
+  status         TopUpStatus @default(pending)
+  acknowledgedAt DateTime?
+
+  @@map("topup_requests")
 }
