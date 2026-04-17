@@ -34,6 +34,237 @@ function DrinkBar({ used, tier }) {
   );
 }
 
+function RedeemModal({ membership, onClose, onSuccess }) {
+  const [count, setCount]         = useState(1);
+  const [drinkType, setDrinkType] = useState('');
+  const [notes, setNotes]         = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState('');
+
+  const remaining  = membership.drinksRemaining;
+  const afterRedeem = remaining !== null ? remaining - count : null;
+
+  async function handleConfirm() {
+    setLoading(true);
+    setError('');
+    try {
+      await membershipApi.redeem(membership.id, {
+        count,
+        drinkType: drinkType.trim() || undefined,
+        notes:     notes.trim()     || undefined,
+      });
+      onSuccess();
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to log drink');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+        <h3 className="text-base font-semibold text-gray-900 mb-4">Log drink redemption</h3>
+        <div className="space-y-3 mb-5">
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Company</p>
+            <p className="text-sm font-medium text-gray-900 bg-gray-50 rounded-lg px-3 py-2">{membership.companyName}</p>
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Count</label>
+            <select
+              value={count}
+              onChange={e => setCount(Number(e.target.value))}
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:border-primary"
+            >
+              {[1, 2, 3, 4, 5].map(n => (
+                <option key={n} value={n}>{n} drink{n > 1 ? 's' : ''}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Drink type <span className="text-gray-400">(optional)</span></label>
+            <input
+              value={drinkType}
+              onChange={e => setDrinkType(e.target.value)}
+              placeholder="e.g. Americano, Latte, Tea"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Note <span className="text-gray-400">(optional)</span></label>
+            <input
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              placeholder="e.g. team meeting"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+            />
+          </div>
+          {remaining !== null && (
+            <p className="text-xs text-gray-500">
+              Balance after:{' '}
+              <span className={`font-semibold ${afterRedeem < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                {afterRedeem} drink{afterRedeem !== 1 ? 's' : ''} remaining
+              </span>
+            </p>
+          )}
+          {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={handleConfirm}
+            disabled={loading || (remaining !== null && count > remaining)}
+            className="flex-1 bg-secondary text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-secondary/90 disabled:opacity-50 transition-colors"
+          >
+            {loading ? 'Logging…' : 'Confirm'}
+          </button>
+          <button
+            onClick={onClose}
+            className="px-5 text-sm text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UsagePanel({ membershipId, onClose }) {
+  const [data, setData]       = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    membershipApi.getUsage(membershipId, { limit: 30 })
+      .then(r => setData(r.data))
+      .finally(() => setLoading(false));
+  }, [membershipId]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[80vh] flex flex-col">
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+          <h3 className="text-base font-semibold text-gray-900">Usage history</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+        </div>
+        {loading ? (
+          <p className="text-sm text-gray-500 text-center py-12">Loading…</p>
+        ) : !data?.records?.length ? (
+          <p className="text-sm text-gray-500 text-center py-12">No redemptions recorded yet.</p>
+        ) : (
+          <div className="overflow-y-auto flex-1">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-white">
+                <tr className="border-b border-gray-100">
+                  <th className="text-left py-2 text-xs text-gray-500 font-medium">Date & time</th>
+                  <th className="text-left py-2 text-xs text-gray-500 font-medium">Drinks</th>
+                  <th className="text-left py-2 text-xs text-gray-500 font-medium">Type</th>
+                  <th className="text-left py-2 text-xs text-gray-500 font-medium">By</th>
+                  <th className="text-left py-2 text-xs text-gray-500 font-medium">Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.records.map(r => (
+                  <tr key={r.id} className="border-b border-gray-50">
+                    <td className="py-2.5 text-gray-900 text-xs">
+                      {new Date(r.redeemedAt).toLocaleString('en-IN', {
+                        month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit',
+                      })}
+                    </td>
+                    <td className="py-2.5 font-medium text-gray-900">{r.count}</td>
+                    <td className="py-2.5 text-gray-500">{r.drinkType || '—'}</td>
+                    <td className="py-2.5 text-gray-500">{r.redeemedBy?.name || '—'}</td>
+                    <td className="py-2.5 text-gray-400 text-xs">{r.notes || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PortalAccountModal({ membership, onClose }) {
+  const [email, setEmail]     = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult]   = useState(null);
+  const [error, setError]     = useState('');
+
+  async function handleCreate() {
+    if (!email.trim()) return;
+    setLoading(true);
+    setError('');
+    try {
+      const r = await membershipApi.createAccount(membership.id, email.trim());
+      setResult(r.data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to create account');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+        <h3 className="text-base font-semibold text-gray-900 mb-1">Portal account</h3>
+        <p className="text-xs text-gray-500 mb-4">{membership.companyName}</p>
+        {result ? (
+          <div className="space-y-4">
+            <div className="bg-green-50 rounded-xl px-4 py-4 border border-green-100">
+              <p className="text-xs font-bold text-green-800 mb-3 uppercase tracking-wide">Account created</p>
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-mono font-medium text-gray-900">{result.account.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Temp password <span className="text-gray-400">(shown once)</span></p>
+                  <p className="text-lg font-mono font-bold text-gray-900 tracking-widest">{result.tempPassword}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">Share with client via WhatsApp. They must change it on first login.</p>
+            </div>
+            <button onClick={onClose} className="w-full text-sm font-semibold text-gray-700 border border-gray-200 py-2.5 rounded-xl hover:bg-gray-50">
+              Done
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block">Client email address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="admin@company.com"
+                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-primary"
+              />
+            </div>
+            {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
+            <div className="flex gap-3">
+              <button
+                onClick={handleCreate}
+                disabled={loading || !email.trim()}
+                className="flex-1 bg-secondary text-white text-sm font-semibold py-2.5 rounded-xl disabled:opacity-50 hover:bg-secondary/90"
+              >
+                {loading ? 'Creating…' : 'Create account'}
+              </button>
+              <button onClick={onClose} className="px-5 text-sm text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function MembershipsPage() {
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd]   = useState(false);
@@ -72,6 +303,16 @@ export function MembershipsPage() {
   const active  = memberships?.filter((m) => m.status === 'active')  ?? [];
   const others  = memberships?.filter((m) => m.status !== 'active')  ?? [];
   const selMem  = memberships?.find((m) => m.id === selected);
+
+  const [redeemTarget, setRedeemTarget] = useState(null);
+  const [usageTarget,  setUsageTarget]  = useState(null);
+  const [portalTarget, setPortalTarget] = useState(null);
+
+  function daysUntilRenewal(renewalDate) {
+    if (!renewalDate) return null;
+    const diff = new Date(renewalDate) - new Date();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
 
   return (
     <div className="space-y-6">
@@ -153,6 +394,21 @@ export function MembershipsPage() {
         {/* Detail panel */}
         {selMem ? (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+            {(() => {
+              const days = daysUntilRenewal(selMem.renewalDate);
+              if (days !== null && days <= 7 && days >= 0) {
+                return (
+                  <div className={`rounded-xl px-3 py-2 text-xs font-semibold ${
+                    days <= 3
+                      ? 'bg-red-50 text-red-700 border border-red-100'
+                      : 'bg-amber-50 text-amber-700 border border-amber-100'
+                  }`}>
+                    Renewal in {days} day{days !== 1 ? 's' : ''} · NPR {Number(selMem.monthlyFee).toLocaleString()}/mo
+                  </div>
+                );
+              }
+              return null;
+            })()}
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-bold text-gray-900">{selMem.companyName}</h3>
@@ -165,17 +421,48 @@ export function MembershipsPage() {
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-muted">Drinks used</span>
-                <span className="font-bold text-gray-900">{selMem.drinksUsed ?? 0} / {ALLOTMENT[selMem.tier] ?? 0}</span>
+                <span className="font-bold text-gray-900">
+                  {selMem.drinksUsed ?? 0}
+                  {selMem.drinksRemaining != null
+                    ? ` / ${(selMem.drinksUsed ?? 0) + selMem.drinksRemaining}`
+                    : ''}
+                </span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-primary rounded-full" style={{ width: `${Math.min(((selMem.drinksUsed ?? 0) / (ALLOTMENT[selMem.tier] ?? 1)) * 100, 100)}%` }} />
+                <div
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{
+                    width: selMem.drinksRemaining != null
+                      ? `${Math.min(((selMem.drinksUsed ?? 0) / ((selMem.drinksUsed ?? 0) + selMem.drinksRemaining)) * 100, 100)}%`
+                      : `${Math.min(((selMem.drinksUsed ?? 0) / (ALLOTMENT[selMem.tier] ?? 1)) * 100, 100)}%`,
+                  }}
+                />
               </div>
+              {selMem.drinksRemaining != null && (
+                <p className="text-xs text-muted mt-1">{selMem.drinksRemaining} remaining</p>
+              )}
             </div>
 
-            {/* +/- buttons */}
+            {/* Action buttons */}
             <div className="flex gap-2">
-              <button onClick={() => addDrink({ id: selMem.id, delta: -1 })} disabled={(selMem.drinksUsed ?? 0) <= 0} className="flex-1 py-2 border border-gray-200 rounded-xl text-sm font-bold text-muted hover:bg-gray-50 disabled:opacity-30">− Drink</button>
-              <button onClick={() => addDrink({ id: selMem.id, delta: 1 })} className="flex-1 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-dark">+ Drink</button>
+              <button
+                onClick={() => setRedeemTarget(selMem)}
+                className="flex-1 py-2 bg-secondary text-white rounded-xl text-sm font-bold hover:bg-secondary/90 transition-colors"
+              >
+                Log drink
+              </button>
+              <button
+                onClick={() => setUsageTarget(selMem.id)}
+                className="flex-1 py-2 border border-gray-200 rounded-xl text-sm font-bold text-muted hover:bg-gray-50 transition-colors"
+              >
+                Usage
+              </button>
+              <button
+                onClick={() => setPortalTarget(selMem)}
+                className="flex-1 py-2 border border-gray-200 rounded-xl text-sm font-bold text-muted hover:bg-gray-50 transition-colors"
+              >
+                Portal
+              </button>
             </div>
 
             {/* Info */}
@@ -210,6 +497,26 @@ export function MembershipsPage() {
           </div>
         )}
       </div>
+
+      {redeemTarget && (
+        <RedeemModal
+          membership={redeemTarget}
+          onClose={() => setRedeemTarget(null)}
+          onSuccess={() => qc.invalidateQueries({ queryKey: ['memberships-web'] })}
+        />
+      )}
+      {usageTarget && (
+        <UsagePanel
+          membershipId={usageTarget}
+          onClose={() => setUsageTarget(null)}
+        />
+      )}
+      {portalTarget && (
+        <PortalAccountModal
+          membership={portalTarget}
+          onClose={() => setPortalTarget(null)}
+        />
+      )}
     </div>
   );
 }
