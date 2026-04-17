@@ -134,10 +134,12 @@ function RedeemModal({ membership, onClose, onSuccess }) {
 function UsagePanel({ membershipId, onClose }) {
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState('');
 
   React.useEffect(() => {
     membershipApi.getUsage(membershipId, { limit: 30 })
       .then(r => setData(r.data))
+      .catch(() => setError('Failed to load usage history'))
       .finally(() => setLoading(false));
   }, [membershipId]);
 
@@ -150,6 +152,8 @@ function UsagePanel({ membershipId, onClose }) {
         </div>
         {loading ? (
           <p className="text-sm text-gray-500 text-center py-12">Loading…</p>
+        ) : error ? (
+          <p className="text-sm text-red-500 text-center py-12">{error}</p>
         ) : !data?.records?.length ? (
           <p className="text-sm text-gray-500 text-center py-12">No redemptions recorded yet.</p>
         ) : (
