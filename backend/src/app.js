@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import multer from 'multer';
+import { uploadToCloudinary } from './services/upload.service.js';
 
 import authRoutes from './routes/auth.routes.js';
 import shiftRoutes from './routes/shift.routes.js';
@@ -43,6 +45,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+
+// ── Trust Proxy ───────────────────────────────────────────────────────────────
+// Required for accurate rate-limiting behind a load balancer (Railway, etc.)
+app.set('trust proxy', 1);
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 const limiter = rateLimit({
@@ -82,6 +88,18 @@ app.get('/api/health', (_req, res) => {
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV,
   });
+});
+
+// ── File Upload ───────────────────────────────────────────────────────────────
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+app.post('/api/upload', upload.single('photo'), async (req, res, next) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    const url = await uploadToCloudinary(req.file.buffer, 'fika');
+    res.json({ url });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────

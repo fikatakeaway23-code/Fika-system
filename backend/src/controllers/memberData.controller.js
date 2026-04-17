@@ -1,5 +1,6 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 import { z } from 'zod';
+import { sendPushToOwner } from '../services/push.service.js';
 
 export async function getMemberDashboard(req, res, next) {
   try {
@@ -141,6 +142,17 @@ export async function submitTopUp(req, res, next) {
     const request = await prisma.topUpRequest.create({
       data: { membershipId: req.member.membershipId, message, status: 'pending' },
     });
+
+    // Push notify owner about top-up request
+    const membership = await prisma.membership.findUnique({
+      where: { id: req.member.membershipId },
+      select: { companyName: true },
+    });
+    sendPushToOwner(
+      '🔄 Top-up request',
+      `${membership?.companyName ?? 'A member'} has requested a package top-up.`,
+      { screen: 'Memberships' }
+    );
 
     res.status(201).json({ request });
   } catch (err) {

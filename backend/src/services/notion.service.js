@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 
 let _notion = null;
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
+import { sendPushToOwner } from '../services/push.service.js';
 
 const createShiftSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -169,6 +170,21 @@ export async function submitShift(req, res, next) {
         espressoLog:  true,
       },
     });
+
+    // Push notify owner
+    const shiftLabel = shift.shiftType === 'am' ? 'Morning (AM)' : 'Afternoon (PM)';
+    sendPushToOwner(
+      `☕ ${shiftLabel} shift submitted`,
+      `${shift.user.name} submitted their ${shiftLabel} shift.`,
+      { screen: 'Shifts', shiftId: shift.id }
+    );
+    if (existing.equipmentIssue) {
+      sendPushToOwner(
+        '⚠️ Equipment issue reported',
+        `${shift.user.name} flagged an equipment issue during their shift.`,
+        { screen: 'Shifts', shiftId: shift.id }
+      );
+    }
 
     res.json(shift);
   } catch (err) {

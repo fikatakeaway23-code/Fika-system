@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 
-const hrSchema = z.object({
+export const hrSchema = z.object({
   staffMember:         z.string(),
   shift:               z.enum(['am', 'pm']).optional(),
   recordType:          z.enum(['attendance', 'leave', 'incident', 'salary_change', 'performance']),

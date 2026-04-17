@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 
 const TIER_ROLLOVER_CAPS = {
   daily_pass: 5,

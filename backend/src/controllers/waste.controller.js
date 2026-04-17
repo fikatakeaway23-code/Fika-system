@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 import { z } from 'zod';
 
 const CATEGORIES = ['beans','milk','syrup','food','packaging','cleaning','other'];

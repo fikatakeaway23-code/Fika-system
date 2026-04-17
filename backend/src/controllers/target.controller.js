@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 
 const targetSchema = z.object({
   period:       z.enum(['daily','monthly']),

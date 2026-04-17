@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma.ts';
 
 // Shift start times (24h hour)
 const SHIFT_START = { am: 8, pm: 14 };
