@@ -1,0 +1,10 @@
+{
+  "installCommand": "npm install --no-workspaces",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [{ "source": "/((?!api/.*).*)", "destination": "/index.html" }],
+  "env": {
+    "VITE_API_URL": "https://desirable-vision-production-b9ee.up.railway.app"
+  }
+}
