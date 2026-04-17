@@ -26,6 +26,7 @@ model User {
   name      String
   role      UserRole
   pinHash   String
+  pushToken String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -35,8 +36,24 @@ model User {
   notionSyncs   NotionSync[]
   checklistCompletions ChecklistCompletion[]
   drinkRedemptions  DrinkRedemption[] @relation("BaristaRedemptions")
+  refreshTokens RefreshToken[]
 
   @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// Refresh Tokens (for silent token renewal)
+// ─────────────────────────────────────────────
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
 }
 
 // ─────────────────────────────────────────────
@@ -225,6 +242,8 @@ model FinanceRecord {
   notionSyncs NotionSync[]
 
   @@unique([date])
+  @@index([month, year])
+  @@index([date])
   @@map("finance_records")
 }
 
@@ -267,6 +286,7 @@ model Expense {
   updatedAt        DateTime        @updatedAt
   notionSyncs      NotionSync[]
 
+  @@index([month, year])
   @@map("expenses")
 }
 
@@ -417,6 +437,7 @@ model HRRecord {
 
   user User @relation(fields: [staffMember], references: [id])
 
+  @@index([date])
   @@map("hr_records")
 }
 
@@ -715,6 +736,7 @@ model DrinkRedemption {
   month            Int
   year             Int
 
+  @@index([month, year])
   @@map("drink_redemptions")
 }
 

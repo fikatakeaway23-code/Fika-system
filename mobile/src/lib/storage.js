@@ -1,29 +1,34 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEYS = {
-  TOKEN:        'fika_token',
-  USER:         'fika_user',
-  PENDING_SYNC: 'fika_pending_sync',
-  DRAFT_SHIFT:  'fika_draft_shift',
-  LAST_SYNC:    'fika_last_sync',
+  TOKEN:         'fika_token',
+  USER:          'fika_user',
+  REFRESH_TOKEN: 'fika_refresh_token',
+  PENDING_SYNC:  'fika_pending_sync',
+  DRAFT_SHIFT:   'fika_draft_shift',
+  LAST_SYNC:     'fika_last_sync',
 };
 
 export const storage = {
   // Auth
-  async saveAuth(token, user) {
-    await AsyncStorage.multiSet([
+  async saveAuth(token, user, refreshToken) {
+    const pairs = [
       [KEYS.TOKEN, token],
       [KEYS.USER,  JSON.stringify(user)],
-    ]);
+    ];
+    if (refreshToken) pairs.push([KEYS.REFRESH_TOKEN, refreshToken]);
+    await AsyncStorage.multiSet(pairs);
   },
 
   async getAuth() {
-    const [[, token], [, userStr]] = await AsyncStorage.multiGet([KEYS.TOKEN, KEYS.USER]);
-    return { token, user: userStr ? JSON.parse(userStr) : null };
+    const [[, token], [, userStr], [, refreshToken]] = await AsyncStorage.multiGet([
+      KEYS.TOKEN, KEYS.USER, KEYS.REFRESH_TOKEN,
+    ]);
+    return { token, user: userStr ? JSON.parse(userStr) : null, refreshToken };
   },
 
   async clearAuth() {
-    await AsyncStorage.multiRemove([KEYS.TOKEN, KEYS.USER]);
+    await AsyncStorage.multiRemove([KEYS.TOKEN, KEYS.USER, KEYS.REFRESH_TOKEN]);
   },
 
   // Draft shift (offline-first)

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getRefreshToken, clearSession } from './auth.js';
 
 const BASE_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -17,13 +18,48 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Silent refresh interceptor — on 401, try to refresh the token before redirecting
+let isRefreshing = false;
+let refreshQueue = [];
+
 api.interceptors.response.use(
   (res) => res,
-  (err) => {
-    if (err.response?.status === 401) {
-      sessionStorage.removeItem('fika_token');
-      sessionStorage.removeItem('fika_user');
-      window.location.href = '/staff/login';
+  async (err) => {
+    const original = err.config;
+    if (err.response?.status === 401 && !original._retry) {
+      original._retry = true;
+      const rToken = getRefreshToken();
+      if (!rToken) {
+        clearSession();
+        window.location.href = '/staff/login';
+        return Promise.reject(err);
+      }
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          refreshQueue.push({ resolve, reject });
+        }).then((token) => {
+          original.headers.Authorization = `Bearer ${token}`;
+          return api(original);
+        });
+      }
+      isRefreshing = true;
+      try {
+        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken: rToken });
+        sessionStorage.setItem('fika_token', data.token);
+        sessionStorage.setItem('fika_refresh_token', data.refreshToken);
+        refreshQueue.forEach((p) => p.resolve(data.token));
+        refreshQueue = [];
+        original.headers.Authorization = `Bearer ${data.token}`;
+        return api(original);
+      } catch {
+        refreshQueue.forEach((p) => p.reject(err));
+        refreshQueue = [];
+        clearSession();
+        window.location.href = '/staff/login';
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
     return Promise.reject(err);
   },
@@ -32,6 +68,8 @@ api.interceptors.response.use(
 export const authApi = {
   login:     (role, pin) => api.post('/auth/login', { role, pin }),
   changePin: (data)      => api.post('/auth/change-pin', data),
+  refresh:   (refreshToken) => api.post('/auth/refresh', { refreshToken }),
+  logout:    (refreshToken) => api.post('/auth/logout', { refreshToken }),
 };
 
 export const shiftApi = {
