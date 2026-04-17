@@ -5,7 +5,7 @@ export async function getMonthlyReport(req, res, next) {
     const month = parseInt(req.params.month);
     const year  = parseInt(req.params.year);
 
-    const [finance, expenses, shifts] = await Promise.all([
+    const [finance, expenses, shifts, wasteEntries] = await Promise.all([
       prisma.financeRecord.findMany({ where: { month, year } }),
       prisma.expense.findMany({ where: { month, year } }),
       prisma.shift.findMany({
@@ -17,6 +17,14 @@ export async function getMonthlyReport(req, res, next) {
           status: 'submitted',
         },
         include: { inventoryLog: true, wasteLog: true, espressoLog: true },
+      }),
+      prisma.wasteEntry.findMany({
+        where: {
+          date: {
+            gte: new Date(year, month - 1, 1),
+            lt:  new Date(year, month, 1),
+          },
+        },
       }),
     ]);
 
@@ -40,6 +48,13 @@ export async function getMonthlyReport(req, res, next) {
     const totalCalibrationShots = shifts.reduce((s, sh) => s + (sh.wasteLog?.calibrationShots ?? 0), 0);
     const totalMilkWasted       = shifts.reduce((s, sh) => s + (sh.wasteLog?.milkWasted       ?? 0), 0);
     const totalRemadeDrinks     = shifts.reduce((s, sh) => s + (sh.wasteLog?.remadeDrinks      ?? 0), 0);
+
+    // WasteEntry — detailed itemised waste
+    const totalWasteCost = wasteEntries.reduce((s, e) => s + (e.cost ?? 0), 0);
+    const wasteByCategory = {};
+    for (const e of wasteEntries) {
+      wasteByCategory[e.category] = (wasteByCategory[e.category] ?? 0) + (e.cost ?? 0);
+    }
 
     // Discrepancy count
     const discrepancies = finance.filter((r) => r.discrepancyFlag).length;
@@ -69,6 +84,11 @@ export async function getMonthlyReport(req, res, next) {
         netProfit:  r.netProfit,
         discrepancy: r.discrepancyFlag,
       })),
+      wasteEntries: {
+        totalEntries: wasteEntries.length,
+        estimatedCostLoss: totalWasteCost,
+        byCategory: wasteByCategory,
+      },
     });
   } catch (err) {
     next(err);

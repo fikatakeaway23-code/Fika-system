@@ -131,7 +131,11 @@ model InventoryLog {
 }
 
 // ─────────────────────────────────────────────
-// Waste
+// WasteLog — per-shift operational waste summary
+// Created automatically when a barista submits a shift.
+// Tracks high-level metrics: calibration shots, milk wasted (litres),
+// remade drinks, unsold pastries. Used by the monthly report for
+// operational KPIs.
 // ─────────────────────────────────────────────
 
 model WasteLog {
@@ -596,6 +600,13 @@ enum WasteReason {
   other
 }
 
+// ─────────────────────────────────────────────
+// WasteEntry — detailed standalone waste records
+// Logged manually via the staff dashboard Waste page.
+// Tracks individual items lost with category, quantity, unit, reason,
+// and estimated cost. Used for granular cost-of-waste analysis.
+// Distinct from WasteLog: these are itemised entries, not shift summaries.
+// ─────────────────────────────────────────────
 model WasteEntry {
   id         String      @id @default(cuid())
   date       DateTime    @db.Date
