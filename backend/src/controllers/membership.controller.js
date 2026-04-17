@@ -251,7 +251,7 @@ export async function getUsageSummary(req, res, next) {
 
     const byBarista = {};
     for (const r of redemptions) {
-      const name = r.redeemedBy.name;
+      const name = r.redeemedBy?.name ?? 'Unknown';
       byBarista[name] = (byBarista[name] || 0) + r.count;
     }
 
