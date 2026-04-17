@@ -60,11 +60,17 @@ export const expenseApi = {
 };
 
 export const membershipApi = {
-  getAll:   (params)   => api.get('/memberships',          { params }),
-  getById:  (id)       => api.get(`/memberships/${id}`),
-  create:   (data)     => api.post('/memberships', data),
-  update:   (id, data) => api.put(`/memberships/${id}`, data),
-  addDrink: (id, delta)=> api.post(`/memberships/${id}/drinks`, { delta }),
+  getAll:          (params)    => api.get('/memberships',                      { params }),
+  getById:         (id)        => api.get(`/memberships/${id}`),
+  create:          (data)      => api.post('/memberships', data),
+  update:          (id, data)  => api.put(`/memberships/${id}`, data),
+  addDrink:        (id, delta) => api.post(`/memberships/${id}/drinks`, { delta }), // legacy
+  redeem:          (id, data)  => api.post(`/memberships/${id}/redeem`, data),
+  getUsage:        (id, params)=> api.get(`/memberships/${id}/usage`,          { params }),
+  getUsageSummary: (id, params)=> api.get(`/memberships/${id}/usage/summary`,  { params }),
+  renew:           (id)        => api.post(`/memberships/${id}/renew`),
+  createAccount:   (id, email) => api.post(`/memberships/${id}/member-account`, { email }),
+  deleteAccount:   (id)        => api.delete(`/memberships/${id}/member-account`),
 };
 
 export const hrApi = {
