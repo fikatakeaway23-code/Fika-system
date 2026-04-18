@@ -304,13 +304,18 @@ export function MembershipsPage() {
     addMember({ ...addForm, staffCount: parseInt(addForm.staffCount) || undefined, monthlyFee: parseFloat(addForm.monthlyFee) || undefined, status: 'active' });
   }
 
-  const active  = memberships?.filter((m) => m.status === 'active')  ?? [];
-  const others  = memberships?.filter((m) => m.status !== 'active')  ?? [];
-  const selMem  = memberships?.find((m) => m.id === selected);
-
   const [redeemTarget, setRedeemTarget] = useState(null);
   const [usageTarget,  setUsageTarget]  = useState(null);
   const [portalTarget, setPortalTarget] = useState(null);
+  const [showOverdue, setShowOverdue] = useState(false);
+
+  const active  = memberships?.filter((m) => m.status === 'active')  ?? [];
+  const others  = memberships?.filter((m) => m.status !== 'active')  ?? [];
+  const selMem  = memberships?.find((m) => m.id === selected);
+  const overdueList = (memberships ?? []).filter(
+    (m) => m.status === 'active' && m.renewalDate && new Date(m.renewalDate) < new Date()
+  );
+  const displayed = showOverdue ? overdueList : [...active, ...others];
 
   function daysUntilRenewal(renewalDate) {
     if (!renewalDate) return null;
@@ -320,8 +325,20 @@ export function MembershipsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold text-gray-900">Memberships</h1>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-extrabold text-gray-900">Memberships</h1>
+          <button
+            onClick={() => setShowOverdue((v) => !v)}
+            className={`text-xs font-bold px-3 py-1 rounded-full border transition-colors ${
+              showOverdue
+                ? 'bg-red-600 text-white border-red-600'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-red-400 hover:text-red-600'
+            }`}
+          >
+            {showOverdue ? `Overdue (${overdueList.length})` : 'Overdue'}
+          </button>
+        </div>
         <button onClick={() => setShowAdd(!showAdd)} className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary/90 transition-colors">
           {showAdd ? '✕ Cancel' : '+ Add Membership'}
         </button>
@@ -379,7 +396,7 @@ export function MembershipsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {[...active, ...others].map((m) => (
+                {displayed.map((m) => (
                   <tr key={m.id} className={`hover:bg-surface cursor-pointer transition-colors ${selected === m.id ? 'bg-primary/5' : ''}`} onClick={() => setSelected(m.id === selected ? null : m.id)}>
                     <td className="px-4 py-3">
                       <p className="font-semibold text-gray-900">{m.companyName}</p>

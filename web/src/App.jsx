@@ -31,6 +31,7 @@ import { SchedulePage }         from './pages/staff/SchedulePage.jsx';
 import { AttendancePage }       from './pages/staff/AttendancePage.jsx';
 import { ChecklistPage }        from './pages/staff/ChecklistPage.jsx';
 import { MyShiftPage }          from './pages/staff/MyShiftPage.jsx';
+import { AnalyticsPage }     from './pages/staff/AnalyticsPage.jsx';
 
 function RequireAuth({ children }) {
   return isLoggedIn() ? children : <Navigate to="/staff/login" replace />;
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="attendance"    element={<AttendancePage />} />
           <Route path="checklist"     element={<ChecklistPage />} />
           <Route path="my-shift"      element={<MyShiftPage />} />
+          <Route path="analytics"     element={<AnalyticsPage />} />
         </Route>
 
         {/* Fallback */}

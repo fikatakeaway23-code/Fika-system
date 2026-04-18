@@ -28,6 +28,7 @@ const NAV_GROUPS = [
     label: 'Management',
     ownerOnly: true,
     links: [
+      { to: '/staff/analytics',      label: 'Analytics' },
       { to: '/staff/menu',           label: 'Menu' },
       { to: '/staff/targets',        label: 'Targets' },
       { to: '/staff/suppliers',      label: 'Suppliers' },
