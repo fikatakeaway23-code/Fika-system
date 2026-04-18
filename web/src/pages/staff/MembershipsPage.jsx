@@ -198,7 +198,7 @@ function PortalAccountModal({ membership, onClose }) {
   const [result, setResult]   = useState(null);
   const [error, setError]     = useState('');
 
-  const { data: qrData, isLoading: qrLoading } = useQuery({
+  const { data: qrData, isLoading: qrLoading, isError: qrError } = useQuery({
     queryKey: ['membership-qr', membership.id],
     queryFn:  () => membershipApi.getQr(membership.id).then((r) => r.data),
     enabled:  !!result,
@@ -247,6 +247,8 @@ function PortalAccountModal({ membership, onClose }) {
                 <div className="w-[180px] h-[180px] bg-gray-50 rounded-lg flex items-center justify-center">
                   <span className="text-xs text-gray-400">Loading...</span>
                 </div>
+              ) : qrError ? (
+                <p className="text-xs text-red-500">Could not load QR code.</p>
               ) : qrData?.qrDataUrl ? (
                 <>
                   <img
@@ -254,13 +256,24 @@ function PortalAccountModal({ membership, onClose }) {
                     alt="Member portal QR"
                     className="w-[180px] h-[180px] rounded-lg border border-gray-100"
                   />
-                  <a
-                    href={qrData.qrDataUrl}
-                    download={`fika-qr-${membership.companyName}.png`}
+                  <button
+                    onClick={() => {
+                      const safeName = membership.companyName.replace(/[^a-z0-9\-_ ]/gi, '_');
+                      fetch(qrData.qrDataUrl)
+                        .then(r => r.blob())
+                        .then(blob => {
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `fika-qr-${safeName}.png`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        });
+                    }}
                     className="text-xs text-blue-500 hover:underline"
                   >
                     Download QR
-                  </a>
+                  </button>
                 </>
               ) : null}
             </div>
