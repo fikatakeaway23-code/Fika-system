@@ -5,7 +5,10 @@ import { setToken, setAccount } from '../lib/auth.js';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email,    setEmail]    = useState('');
+  const [email,    setEmail]    = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('email') ?? '';
+  });
   const [password, setPassword] = useState('');
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');

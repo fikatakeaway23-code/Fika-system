@@ -109,6 +109,7 @@ export const membershipApi = {
   renew:           (id)        => api.post(`/memberships/${id}/renew`),
   createAccount:   (id, email) => api.post(`/memberships/${id}/member-account`, { email }),
   deleteAccount:   (id)        => api.delete(`/memberships/${id}/member-account`),
+  getQr:           (id)        => api.get(`/memberships/${id}/qr`),
 };
 
 export const hrApi = {

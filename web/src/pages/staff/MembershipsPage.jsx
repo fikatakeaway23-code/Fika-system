@@ -198,6 +198,13 @@ function PortalAccountModal({ membership, onClose }) {
   const [result, setResult]   = useState(null);
   const [error, setError]     = useState('');
 
+  const { data: qrData, isLoading: qrLoading } = useQuery({
+    queryKey: ['membership-qr', membership.id],
+    queryFn:  () => membershipApi.getQr(membership.id).then((r) => r.data),
+    enabled:  !!result,
+    staleTime: Infinity,
+  });
+
   async function handleCreate() {
     if (!email.trim()) return;
     setLoading(true);
@@ -232,6 +239,30 @@ function PortalAccountModal({ membership, onClose }) {
                 </div>
               </div>
               <p className="text-xs text-gray-400 mt-3">Share with client via WhatsApp. They must change it on first login.</p>
+            </div>
+            {/* QR Code */}
+            <div className="mt-4 flex flex-col items-center gap-2">
+              <p className="text-xs text-gray-400">Scan to open member portal</p>
+              {qrLoading ? (
+                <div className="w-[180px] h-[180px] bg-gray-50 rounded-lg flex items-center justify-center">
+                  <span className="text-xs text-gray-400">Loading...</span>
+                </div>
+              ) : qrData?.qrDataUrl ? (
+                <>
+                  <img
+                    src={qrData.qrDataUrl}
+                    alt="Member portal QR"
+                    className="w-[180px] h-[180px] rounded-lg border border-gray-100"
+                  />
+                  <a
+                    href={qrData.qrDataUrl}
+                    download={`fika-qr-${membership.companyName}.png`}
+                    className="text-xs text-blue-500 hover:underline"
+                  >
+                    Download QR
+                  </a>
+                </>
+              ) : null}
             </div>
             <button onClick={onClose} className="w-full text-sm font-semibold text-gray-700 border border-gray-200 py-2.5 rounded-xl hover:bg-gray-50">
               Done
