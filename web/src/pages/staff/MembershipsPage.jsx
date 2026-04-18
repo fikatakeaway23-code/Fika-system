@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { membershipApi } from '../../lib/api.js';
+import { renewalReminderLink, topUpAckLink } from '../../lib/whatsapp.js';
 
 const TIERS   = ['individual', 'team', 'corporate', 'enterprise'];
 const ALLOTMENT = { individual: 20, team: 50, corporate: 100, enterprise: 200 };
@@ -529,6 +530,35 @@ export function MembershipsPage() {
                 Portal
               </button>
             </div>
+
+            {/* WhatsApp quick actions */}
+            {selMem.whatsapp && (
+              <div className="flex gap-2">
+                <a
+                  href={renewalReminderLink({
+                    phone:       selMem.whatsapp,
+                    companyName: selMem.companyName,
+                    monthlyFee:  selMem.monthlyFee,
+                    renewalDate: selMem.renewalDate,
+                  })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Send renewal reminder on WhatsApp"
+                  className="flex-1 py-2 border border-green-200 rounded-xl text-xs font-bold text-green-700 hover:bg-green-50 transition-colors text-center"
+                >
+                  📲 Renewal
+                </a>
+                <a
+                  href={topUpAckLink({ phone: selMem.whatsapp, companyName: selMem.companyName })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Send top-up acknowledgement on WhatsApp"
+                  className="flex-1 py-2 border border-green-200 rounded-xl text-xs font-bold text-green-700 hover:bg-green-50 transition-colors text-center"
+                >
+                  📲 Top-up
+                </a>
+              </div>
+            )}
 
             {/* Info */}
             {[
