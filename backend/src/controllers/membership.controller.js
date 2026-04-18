@@ -303,6 +303,8 @@ export async function renewMembership(req, res, next) {
 export async function getMemberQrCode(req, res, next) {
   try {
     const { id } = req.params;
+    const membership = await prisma.membership.findUnique({ where: { id } });
+    if (!membership) return res.status(404).json({ error: 'Membership not found' });
     const account = await prisma.memberAccount.findUnique({
       where: { membershipId: id },
       select: { email: true },
@@ -312,7 +314,7 @@ export async function getMemberQrCode(req, res, next) {
       return res.status(404).json({ error: 'No portal account for this membership' });
     }
 
-    const portalUrl = process.env.MEMBER_PORTAL_URL || 'https://fika-member.vercel.app';
+    const portalUrl = process.env.MEMBER_PORTAL_URL || 'http://localhost:5173';
     const loginUrl  = `${portalUrl}?email=${encodeURIComponent(account.email)}`;
 
     const qrDataUrl = await QRCode.toDataURL(loginUrl, {
