@@ -1,3 +1,4 @@
+import QRCode from 'qrcode';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.ts';
 
@@ -294,6 +295,33 @@ export async function renewMembership(req, res, next) {
     });
 
     res.json({ membership: updated, rolloverEarned, newConsecutive });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getMemberQrCode(req, res, next) {
+  try {
+    const { id } = req.params;
+    const account = await prisma.memberAccount.findUnique({
+      where: { membershipId: id },
+      select: { email: true },
+    });
+
+    if (!account) {
+      return res.status(404).json({ error: 'No portal account for this membership' });
+    }
+
+    const portalUrl = process.env.MEMBER_PORTAL_URL || 'https://fika-member.vercel.app';
+    const loginUrl  = `${portalUrl}?email=${encodeURIComponent(account.email)}`;
+
+    const qrDataUrl = await QRCode.toDataURL(loginUrl, {
+      width: 300,
+      margin: 2,
+      color: { dark: '#1a1a1a', light: '#ffffff' },
+    });
+
+    res.json({ qrDataUrl, loginUrl });
   } catch (err) {
     next(err);
   }
