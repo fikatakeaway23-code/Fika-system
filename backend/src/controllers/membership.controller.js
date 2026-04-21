@@ -331,8 +331,8 @@ export async function getMemberQrCode(req, res, next) {
 
 export async function getTopUpRequests(req, res, next) {
   try {
-    const { status } = req.query;
-    const where = status ? { status } : {};
+    const statusParam = z.enum(['pending', 'acknowledged', 'fulfilled']).optional().catch(undefined).parse(req.query.status);
+    const where = statusParam ? { status: statusParam } : {};
     const requests = await prisma.topUpRequest.findMany({
       where,
       orderBy: { requestedAt: 'desc' },
@@ -363,7 +363,9 @@ export async function updateTopUpRequest(req, res, next) {
       where: { id: requestId },
       data: {
         status,
-        acknowledgedAt: status === 'acknowledged' || status === 'fulfilled' ? new Date() : undefined,
+        ...(status === 'acknowledged' && !existing.acknowledgedAt
+          ? { acknowledgedAt: new Date() }
+          : {}),
       },
     });
     res.json({ request: updated });
