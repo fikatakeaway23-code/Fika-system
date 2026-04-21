@@ -328,3 +328,46 @@ export async function getMemberQrCode(req, res, next) {
     next(err);
   }
 }
+
+export async function getTopUpRequests(req, res, next) {
+  try {
+    const { status } = req.query;
+    const where = status ? { status } : {};
+    const requests = await prisma.topUpRequest.findMany({
+      where,
+      orderBy: { requestedAt: 'desc' },
+      include: {
+        membership: {
+          select: { id: true, companyName: true, whatsapp: true, tier: true, drinksRemaining: true },
+        },
+      },
+    });
+    res.json({ requests });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateTopUpRequest(req, res, next) {
+  try {
+    const { requestId } = req.params;
+    const schema = z.object({
+      status: z.enum(['acknowledged', 'fulfilled']),
+    });
+    const { status } = schema.parse(req.body);
+
+    const existing = await prisma.topUpRequest.findUnique({ where: { id: requestId } });
+    if (!existing) return res.status(404).json({ error: 'Top-up request not found' });
+
+    const updated = await prisma.topUpRequest.update({
+      where: { id: requestId },
+      data: {
+        status,
+        acknowledgedAt: status === 'acknowledged' || status === 'fulfilled' ? new Date() : undefined,
+      },
+    });
+    res.json({ request: updated });
+  } catch (err) {
+    next(err);
+  }
+}

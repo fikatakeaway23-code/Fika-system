@@ -11,6 +11,8 @@ import {
   getUsageSummary,
   renewMembership,
   getMemberQrCode,
+  getTopUpRequests,
+  updateTopUpRequest,
 } from '../controllers/membership.controller.js';
 import {
   createMemberAccount,
@@ -19,6 +21,10 @@ import {
 import { authenticate, requireOwner } from '../middleware/auth.middleware.js';
 
 const router = Router();
+
+// Top-up request management (must be before /:id routes)
+router.get('/topup-requests',              authenticate, requireOwner, getTopUpRequests);
+router.patch('/topup-requests/:requestId', authenticate, requireOwner, updateTopUpRequest);
 
 // Owner-only routes
 router.post('/',      authenticate, requireOwner, createMembership);
