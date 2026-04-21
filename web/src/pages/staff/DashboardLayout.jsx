@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { clearSession, getUser, isOwner } from '../../lib/auth.js';
+import { membershipApi } from '../../lib/api.js';
 
 const NAV_GROUPS = [
   {
@@ -40,7 +42,7 @@ const NAV_GROUPS = [
   },
 ];
 
-function SidebarContent({ owner, onNav, onLogout, user }) {
+function SidebarContent({ owner, onNav, onLogout, user, pendingTopUps }) {
   const initials = user?.name?.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2) ?? '??';
 
   return (
@@ -79,7 +81,12 @@ function SidebarContent({ owner, onNav, onLogout, user }) {
                     }`
                   }
                 >
-                  {label}
+                  <span className="flex-1">{label}</span>
+                  {label === 'Memberships' && pendingTopUps > 0 && (
+                    <span className="text-[10px] font-bold bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center flex-shrink-0">
+                      {pendingTopUps > 9 ? '9+' : pendingTopUps}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>
@@ -115,6 +122,15 @@ export function DashboardLayout() {
   const owner    = isOwner();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const { data: topUpData } = useQuery({
+    queryKey:        ['topup-pending-count'],
+    queryFn:         () => membershipApi.getTopUpRequests('pending').then((r) => r.data),
+    enabled:         owner,
+    refetchInterval: 60_000,
+    staleTime:       30_000,
+  });
+  const pendingTopUps = topUpData?.requests?.length ?? 0;
+
   function handleLogout() {
     clearSession();
     navigate('/staff/login', { replace: true });
@@ -126,7 +142,7 @@ export function DashboardLayout() {
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Desktop sidebar */}
       <aside className="hidden md:flex flex-col w-56 bg-white border-r border-gray-100 flex-shrink-0">
-        <SidebarContent owner={owner} onNav={() => {}} onLogout={handleLogout} user={user} />
+        <SidebarContent owner={owner} onNav={() => {}} onLogout={handleLogout} user={user} pendingTopUps={pendingTopUps} />
       </aside>
 
       {/* Mobile overlay */}
@@ -134,7 +150,7 @@ export function DashboardLayout() {
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
           <aside className="absolute left-0 top-0 bottom-0 w-60 bg-white shadow-xl">
-            <SidebarContent owner={owner} onNav={() => setSidebarOpen(false)} onLogout={handleLogout} user={user} />
+            <SidebarContent owner={owner} onNav={() => setSidebarOpen(false)} onLogout={handleLogout} user={user} pendingTopUps={pendingTopUps} />
           </aside>
         </div>
       )}
@@ -157,8 +173,15 @@ export function DashboardLayout() {
             </div>
             <span className="font-black text-secondary tracking-widest text-sm">FIKA</span>
           </div>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${owner ? 'bg-secondary' : 'bg-primary'}`}>
-            {initials}
+          <div className="relative">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${owner ? 'bg-secondary' : 'bg-primary'}`}>
+              {initials}
+            </div>
+            {pendingTopUps > 0 && (
+              <span className="absolute -top-1 -right-1 text-[9px] font-bold bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                {pendingTopUps > 9 ? '9+' : pendingTopUps}
+              </span>
+            )}
           </div>
         </header>
 

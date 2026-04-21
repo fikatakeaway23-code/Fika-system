@@ -343,6 +343,22 @@ export function MembershipsPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['memberships-web'] }),
   });
 
+  const { data: topUpData } = useQuery({
+    queryKey:        ['topup-requests-memberships'],
+    queryFn:         () => membershipApi.getTopUpRequests('pending').then((r) => r.data),
+    staleTime:       30_000,
+    refetchInterval: 60_000,
+  });
+  const pendingRequests = topUpData?.requests ?? [];
+
+  const ackTopUp = useMutation({
+    mutationFn: ({ requestId, status }) => membershipApi.updateTopUpRequest(requestId, status),
+    onSuccess:  () => {
+      qc.invalidateQueries({ queryKey: ['topup-requests-memberships'] });
+      qc.invalidateQueries({ queryKey: ['topup-pending-count'] });
+    },
+  });
+
   function handleAdd(e) {
     e.preventDefault();
     if (!addForm.companyName.trim()) { setAddError('Company name required.'); return; }
@@ -420,6 +436,48 @@ export function MembershipsPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {pendingRequests.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-amber-800">
+              {pendingRequests.length} Pending Top-up Request{pendingRequests.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="space-y-2">
+            {pendingRequests.map((req) => (
+              <div key={req.id} className="bg-white rounded-xl border border-amber-100 p-3 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate">{req.membership.companyName}</p>
+                  {req.message && (
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{req.message}</p>
+                  )}
+                  <p className="text-[11px] text-gray-400 mt-0.5">
+                    {new Date(req.requestedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    {req.membership.drinksRemaining != null && ` · ${req.membership.drinksRemaining} drinks remaining`}
+                  </p>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => ackTopUp.mutate({ requestId: req.id, status: 'acknowledged' })}
+                    disabled={ackTopUp.isPending}
+                    className="px-3 py-1.5 text-xs font-bold border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors disabled:opacity-50"
+                  >
+                    Acknowledge
+                  </button>
+                  <button
+                    onClick={() => ackTopUp.mutate({ requestId: req.id, status: 'fulfilled' })}
+                    disabled={ackTopUp.isPending}
+                    className="px-3 py-1.5 text-xs font-bold bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors disabled:opacity-50"
+                  >
+                    Fulfilled ✓
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

@@ -110,6 +110,8 @@ export const membershipApi = {
   createAccount:   (id, email) => api.post(`/memberships/${id}/member-account`, { email }),
   deleteAccount:   (id)        => api.delete(`/memberships/${id}/member-account`),
   getQr:           (id)        => api.get(`/memberships/${id}/qr`),
+  getTopUpRequests: (status)   => api.get('/memberships/topup-requests', { params: status ? { status } : {} }),
+  updateTopUpRequest: (requestId, status) => api.patch(`/memberships/topup-requests/${requestId}`, { status }),
 };
 
 export const hrApi = {
