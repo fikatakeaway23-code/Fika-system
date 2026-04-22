@@ -1,5 +1,4 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { storage } from './storage.js';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api';
@@ -12,76 +11,27 @@ export const api = axios.create({
 
 // Attach JWT on every request
 api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem('fika_token');
+  const { token } = await storage.getAuth();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Silent refresh interceptor — on 401, try refresh before clearing session
-let isRefreshing = false;
-let refreshQueue = [];
-
+// Handle token expiry globally
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
-    const original = err.config;
-    if (err.response?.status === 401 && !original._retry) {
-      original._retry = true;
-      const rToken = await AsyncStorage.getItem('fika_refresh_token');
-      if (!rToken) {
-        await AsyncStorage.multiRemove(['fika_token', 'fika_user', 'fika_refresh_token']);
-        return Promise.reject(err);
-      }
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          refreshQueue.push({ resolve, reject });
-        }).then((token) => {
-          original.headers.Authorization = `Bearer ${token}`;
-          return api(original);
-        });
-      }
-      isRefreshing = true;
-      try {
-        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken: rToken });
-        await storage.updateTokens(data.token, data.refreshToken);
-        refreshQueue.forEach((p) => p.resolve(data.token));
-        refreshQueue = [];
-        original.headers.Authorization = `Bearer ${data.token}`;
-        return api(original);
-      } catch {
-        refreshQueue.forEach((p) => p.reject(err));
-        refreshQueue = [];
-        await AsyncStorage.multiRemove(['fika_token', 'fika_user', 'fika_refresh_token']);
-        return Promise.reject(err);
-      } finally {
-        isRefreshing = false;
-      }
+    if (err.response?.status === 401) {
+      await storage.clearAuth();
+      // Navigation reset handled in auth store
     }
     return Promise.reject(err);
   }
 );
 
-// ── Upload ────────────────────────────────────────────────────────────────────
-export const uploadPhoto = async (uri) => {
-  const formData = new FormData();
-  // React Native fetch/axios requires name, type, and uri for file uploads
-  formData.append('photo', {
-    uri,
-    name: `photo_${Date.now()}.jpg`,
-    type: 'image/jpeg',
-  });
-
-  const { data } = await api.post('/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return data.url;
-};
-
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const authApi = {
-  login:     (role, pin, pushToken) => api.post('/auth/login', { role, pin, pushToken }),
-  changePin: (data)                 => api.post('/auth/change-pin', data),
-  logout:    (refreshToken)         => api.post('/auth/logout',     { refreshToken }),
+  login:     (role, pin)   => api.post('/auth/login',      { role, pin }),
+  changePin: (data)        => api.post('/auth/change-pin', data),
 };
 
 // ── Shifts ────────────────────────────────────────────────────────────────────
@@ -125,7 +75,7 @@ export const membershipApi = {
   getById:   (id)          => api.get(`/memberships/${id}`),
   update:    (id, data)    => api.put(`/memberships/${id}`,     data),
   delete:    (id)          => api.delete(`/memberships/${id}`),
-  addDrink:  (id, delta)   => api.post(`/memberships/${id}/drinks`, { delta }),
+  redeem:    (id, data)    => api.post(`/memberships/${id}/redeem`, data),
 };
 
 // ── HR ────────────────────────────────────────────────────────────────────────

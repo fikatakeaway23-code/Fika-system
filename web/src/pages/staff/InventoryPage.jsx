@@ -197,7 +197,7 @@ export function InventoryPage() {
       )}
 
       {/* Adjust modal */}
-      {adjustId && (
+      {owner && adjustId && (
         <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 shadow-xl w-full max-w-xs">
             <h3 className="font-bold text-gray-900 mb-1">Adjust Stock</h3>
@@ -276,7 +276,7 @@ function CategoryTable({ cat, items, owner, onEdit, onDelete, onAdjust }) {
                 </div>
               )}
               <div className="flex gap-1 flex-shrink-0">
-                <button onClick={() => onAdjust(item.id)} className="text-xs text-secondary font-semibold px-2 py-1 rounded hover:bg-secondary/10">Adjust</button>
+                {owner && <button onClick={() => onAdjust(item.id)} className="text-xs text-secondary font-semibold px-2 py-1 rounded hover:bg-secondary/10">Adjust</button>}
                 {owner && <button onClick={() => onEdit(item)} className="text-xs text-gray-500 font-semibold px-2 py-1 rounded hover:bg-gray-100">Edit</button>}
                 {owner && <button onClick={() => onDelete(item.id)} className="text-xs text-red-500 font-semibold px-2 py-1 rounded hover:bg-red-50">Delete</button>}
               </div>

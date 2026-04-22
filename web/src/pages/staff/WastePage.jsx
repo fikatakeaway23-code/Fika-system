@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format, subMonths, addMonths } from 'date-fns';
 import { wasteApi } from '../../lib/api.js';
+import { isOwner } from '../../lib/auth.js';
 
 const CATEGORIES = ['beans','milk','syrup','food','packaging','cleaning','other'];
 const CAT_LABELS  = { beans:'Coffee Beans', milk:'Milk & Dairy', syrup:'Syrups', food:'Food', packaging:'Packaging', cleaning:'Cleaning', other:'Other' };
@@ -19,6 +20,7 @@ const EMPTY = { date: today, shiftType: 'am', item: '', category: 'beans', quant
 
 export function WastePage() {
   const qc = useQueryClient();
+  const owner = isOwner();
   const [cursor, setCursor]     = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [form, setForm]         = useState(EMPTY);
@@ -206,7 +208,9 @@ export function WastePage() {
                   <p className="text-xs text-gray-500 mt-0.5">{CAT_LABELS[entry.category]} · {entry.quantity} {entry.unit}{entry.notes ? ` · ${entry.notes}` : ''}</p>
                 </div>
                 {entry.cost ? <span className="text-sm font-bold text-red-500 flex-shrink-0">NPR {entry.cost.toLocaleString()}</span> : null}
-                <button onClick={() => { if (confirm('Delete entry?')) deleteMut.mutate(entry.id); }} className="text-xs text-red-400 font-semibold px-2 py-1 rounded hover:bg-red-50 flex-shrink-0">Delete</button>
+                {owner && (
+                  <button onClick={() => { if (confirm('Delete entry?')) deleteMut.mutate(entry.id); }} className="text-xs text-red-400 font-semibold px-2 py-1 rounded hover:bg-red-50 flex-shrink-0">Delete</button>
+                )}
               </div>
             ))}
           </div>

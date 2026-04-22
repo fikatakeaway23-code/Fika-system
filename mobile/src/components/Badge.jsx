@@ -14,7 +14,7 @@ const VARIANTS = {
   reviewed:  { bg: '#EDF2F7',           text: '#4A5568' },
 };
 
-export function Badge({ variant = 'active', label, style }) {
+export function Badge({ variant = 'active', label = String(variant), style }) {
   const v = VARIANTS[variant] ?? VARIANTS.active;
   return (
     <View style={[styles.badge, { backgroundColor: v.bg }, style]}>

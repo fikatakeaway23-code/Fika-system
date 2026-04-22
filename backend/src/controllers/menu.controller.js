@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 const menuSchema = z.object({
   name:        z.string().min(1),

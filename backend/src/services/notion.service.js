@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 let _notion = null;
 
@@ -14,12 +14,22 @@ function getClient() {
 }
 
 const DB = {
-  shifts:      process.env.NOTION_DB_SHIFTS      ?? 'f6352734d3df4702bafcad2e4566426d',
-  finance:     process.env.NOTION_DB_FINANCE      ?? 'c02e3a7f7f0649e9bcad12cc8cd8600a',
-  expenses:    process.env.NOTION_DB_EXPENSES     ?? '12a698558ed14ac790e652135f9ec6b2',
-  hr:          process.env.NOTION_DB_HR           ?? '2f71a18986c84eacb5eac19fb0f63a63',
-  memberships: process.env.NOTION_DB_MEMBERSHIPS  ?? 'acce6ef958704ac289d3db5d17daee80',
+  shifts:      process.env.NOTION_DB_SHIFTS,
+  finance:     process.env.NOTION_DB_FINANCE,
+  expenses:    process.env.NOTION_DB_EXPENSES,
+  hr:          process.env.NOTION_DB_HR,
+  memberships: process.env.NOTION_DB_MEMBERSHIPS,
 };
+
+function assertDatabaseConfig() {
+  const missing = Object.entries(DB)
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
+
+  if (missing.length > 0) {
+    throw new Error(`Missing Notion database configuration: ${missing.join(', ')}`);
+  }
+}
 
 // ─────────────────────────────────────────────
 // Property builders
@@ -41,6 +51,7 @@ const p = {
 
 async function syncShift(shiftId) {
   const notion = getClient();
+  assertDatabaseConfig();
 
   const shift = await prisma.shift.findUnique({
     where: { id: shiftId },
@@ -113,6 +124,7 @@ async function syncShift(shiftId) {
 
 async function syncFinance(financeId) {
   const notion = getClient();
+  assertDatabaseConfig();
   const record = await prisma.financeRecord.findUnique({ where: { id: financeId } });
   if (!record) throw new Error(`Finance record ${financeId} not found`);
 
@@ -162,6 +174,7 @@ async function syncFinance(financeId) {
 
 async function syncExpense(expenseId) {
   const notion = getClient();
+  assertDatabaseConfig();
   const expense = await prisma.expense.findUnique({ where: { id: expenseId } });
   if (!expense) throw new Error(`Expense ${expenseId} not found`);
 
@@ -199,6 +212,7 @@ async function syncExpense(expenseId) {
 
 async function syncHR(hrId) {
   const notion = getClient();
+  assertDatabaseConfig();
   const record = await prisma.hRRecord.findUnique({
     where: { id: hrId },
     include: { user: { select: { name: true } } },
@@ -247,6 +261,7 @@ async function syncHR(hrId) {
 
 async function syncMembership(membershipId) {
   const notion = getClient();
+  assertDatabaseConfig();
   const m = await prisma.membership.findUnique({ where: { id: membershipId } });
   if (!m) throw new Error(`Membership ${membershipId} not found`);
 

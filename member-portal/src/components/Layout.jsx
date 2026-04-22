@@ -12,6 +12,9 @@ const NAV = [
 export function Layout() {
   const navigate = useNavigate();
   const account  = getAccount();
+  const navItems = account?.mustChangePassword
+    ? NAV.filter((item) => item.to === '/profile')
+    : NAV;
 
   function handleLogout() {
     clearToken();
@@ -34,7 +37,7 @@ export function Layout() {
           </div>
         </div>
         <nav className="flex-1 overflow-y-auto py-3 px-3">
-          {NAV.map(({ to, label, end }) => (
+          {navItems.map(({ to, label, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -77,7 +80,7 @@ export function Layout() {
 
         {/* Mobile bottom nav */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex z-10">
-          {NAV.map(({ to, label, end }) => (
+          {navItems.map(({ to, label, end }) => (
             <NavLink
               key={to}
               to={to}

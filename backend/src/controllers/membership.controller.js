@@ -1,6 +1,5 @@
-import QRCode from 'qrcode';
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 const TIER_ROLLOVER_CAPS = {
   daily_pass: 5,
@@ -120,18 +119,28 @@ export async function deleteMembership(req, res, next) {
 
 export async function incrementDrinks(req, res, next) {
   try {
-    const { delta = 1 } = req.body; // +1 or -1
+    const adjustSchema = z.object({
+      delta: z.number().int().positive().default(1),
+    });
+    const { delta } = adjustSchema.parse(req.body);
     const membership = await prisma.membership.findUnique({ where: { id: req.params.id } });
     if (!membership) return res.status(404).json({ error: 'Membership not found' });
 
-    const newUsed = Math.max(0, membership.drinksUsed + delta);
-    const newRemaining = membership.drinksRemaining !== null
-      ? Math.max(0, membership.drinksRemaining - delta)
-      : null;
+    if (membership.drinksRemaining !== null && membership.drinksRemaining < delta) {
+      return res.status(400).json({
+        error: 'Insufficient balance',
+        drinksRemaining: membership.drinksRemaining,
+      });
+    }
 
     const updated = await prisma.membership.update({
       where: { id: req.params.id },
-      data: { drinksUsed: newUsed, drinksRemaining: newRemaining },
+      data: {
+        drinksUsed: { increment: delta },
+        ...(membership.drinksRemaining !== null && {
+          drinksRemaining: { decrement: delta },
+        }),
+      },
     });
 
     res.json(updated);
@@ -165,9 +174,32 @@ export async function redeemDrink(req, res, next) {
     const now   = new Date();
     const month = now.getMonth() + 1;
     const year  = now.getFullYear();
+    const startOfDay = new Date(now);
+    const endOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    endOfDay.setHours(23, 59, 59, 999);
 
-    const [redemption, updated] = await prisma.$transaction([
-      prisma.drinkRedemption.create({
+    const { redemption, updated } = await prisma.$transaction(async (tx) => {
+      if (membership.tier === 'daily_pass') {
+        const dailyLimit = membership.drinksPerDay ?? membership.staffCount;
+        const redeemedToday = await tx.drinkRedemption.aggregate({
+          where: {
+            membershipId: id,
+            redeemedAt: { gte: startOfDay, lte: endOfDay },
+          },
+          _sum: { count: true },
+        });
+        const totalToday = redeemedToday._sum.count ?? 0;
+
+        if (totalToday + count > dailyLimit) {
+          throw Object.assign(new Error('Daily pass limit exceeded'), {
+            status: 400,
+            details: { dailyLimit, redeemedToday: totalToday },
+          });
+        }
+      }
+
+      const redemption = await tx.drinkRedemption.create({
         data: {
           membershipId:     id,
           count,
@@ -177,8 +209,9 @@ export async function redeemDrink(req, res, next) {
           month,
           year,
         },
-      }),
-      prisma.membership.update({
+      });
+
+      const updated = await tx.membership.update({
         where: { id },
         data: {
           drinksUsed: { increment: count },
@@ -186,11 +219,19 @@ export async function redeemDrink(req, res, next) {
             drinksRemaining: { decrement: count },
           }),
         },
-      }),
-    ]);
+      });
+
+      return { redemption, updated };
+    });
 
     res.json({ redemption, membership: updated });
   } catch (err) {
+    if (err.status === 400 && err.message === 'Daily pass limit exceeded') {
+      return res.status(400).json({
+        error: err.message,
+        ...err.details,
+      });
+    }
     next(err);
   }
 }
@@ -295,80 +336,6 @@ export async function renewMembership(req, res, next) {
     });
 
     res.json({ membership: updated, rolloverEarned, newConsecutive });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function getMemberQrCode(req, res, next) {
-  try {
-    const { id } = req.params;
-    const membership = await prisma.membership.findUnique({ where: { id } });
-    if (!membership) return res.status(404).json({ error: 'Membership not found' });
-    const account = await prisma.memberAccount.findUnique({
-      where: { membershipId: id },
-      select: { email: true },
-    });
-
-    if (!account) {
-      return res.status(404).json({ error: 'No portal account for this membership' });
-    }
-
-    const portalUrl = process.env.MEMBER_PORTAL_URL || 'http://localhost:5173';
-    const loginUrl  = `${portalUrl}?email=${encodeURIComponent(account.email)}`;
-
-    const qrDataUrl = await QRCode.toDataURL(loginUrl, {
-      width: 300,
-      margin: 2,
-      color: { dark: '#1a1a1a', light: '#ffffff' },
-    });
-
-    res.json({ qrDataUrl, loginUrl });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function getTopUpRequests(req, res, next) {
-  try {
-    const statusParam = z.enum(['pending', 'acknowledged', 'fulfilled']).optional().catch(undefined).parse(req.query.status);
-    const where = statusParam ? { status: statusParam } : {};
-    const requests = await prisma.topUpRequest.findMany({
-      where,
-      orderBy: { requestedAt: 'desc' },
-      include: {
-        membership: {
-          select: { id: true, companyName: true, whatsapp: true, tier: true, drinksRemaining: true },
-        },
-      },
-    });
-    res.json({ requests });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function updateTopUpRequest(req, res, next) {
-  try {
-    const { requestId } = req.params;
-    const schema = z.object({
-      status: z.enum(['acknowledged', 'fulfilled']),
-    });
-    const { status } = schema.parse(req.body);
-
-    const existing = await prisma.topUpRequest.findUnique({ where: { id: requestId } });
-    if (!existing) return res.status(404).json({ error: 'Top-up request not found' });
-
-    const updated = await prisma.topUpRequest.update({
-      where: { id: requestId },
-      data: {
-        status,
-        ...(status === 'acknowledged' && !existing.acknowledgedAt
-          ? { acknowledgedAt: new Date() }
-          : {}),
-      },
-    });
-    res.json({ request: updated });
   } catch (err) {
     next(err);
   }

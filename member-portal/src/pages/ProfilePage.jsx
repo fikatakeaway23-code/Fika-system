@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { memberApi } from '../lib/api.js';
+import { updateAccount } from '../lib/auth.js';
 
 const TIER_LABELS = {
   daily_pass:    'Fika Pass',
@@ -9,6 +11,7 @@ const TIER_LABELS = {
 };
 
 export function ProfilePage() {
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword,     setNewPassword]     = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -30,8 +33,10 @@ export function ProfilePage() {
     setPwError('');
     try {
       await memberApi.changePassword(currentPassword, newPassword);
+      updateAccount({ mustChangePassword: false });
       setPwSuccess(true);
       setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
+      navigate('/', { replace: true });
     } catch (err) {
       setPwError(err.response?.data?.error || 'Failed to change password.');
     } finally {

@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 import { z } from 'zod';
 
 const scheduleSchema = z.object({

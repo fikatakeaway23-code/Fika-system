@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 const announcementSchema = z.object({
   title:     z.string().min(1),

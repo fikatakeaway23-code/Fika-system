@@ -1,41 +1,61 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 const KEYS = {
-  TOKEN:         'fika_token',
-  USER:          'fika_user',
-  REFRESH_TOKEN: 'fika_refresh_token',
-  PENDING_SYNC:  'fika_pending_sync',
-  DRAFT_SHIFT:   'fika_draft_shift',
-  LAST_SYNC:     'fika_last_sync',
+  TOKEN:        'fika_token',
+  USER:         'fika_user',
+  PENDING_SYNC: 'fika_pending_sync',
+  DRAFT_SHIFT:  'fika_draft_shift',
+  LAST_SYNC:    'fika_last_sync',
 };
+
+async function setSecureJson(key, value) {
+  await SecureStore.setItemAsync(key, JSON.stringify(value));
+}
+
+async function getSecureJson(key) {
+  const raw = await SecureStore.getItemAsync(key);
+  return raw ? JSON.parse(raw) : null;
+}
 
 export const storage = {
   // Auth
-  async updateTokens(token, refreshToken) {
-    await AsyncStorage.multiSet([
-      [KEYS.TOKEN, token],
-      [KEYS.REFRESH_TOKEN, refreshToken],
+  async saveAuth(token, user) {
+    await Promise.all([
+      SecureStore.setItemAsync(KEYS.TOKEN, token),
+      setSecureJson(KEYS.USER, user),
+      AsyncStorage.multiRemove([KEYS.TOKEN, KEYS.USER]),
     ]);
-  },
-
-  async saveAuth(token, user, refreshToken) {
-    const pairs = [
-      [KEYS.TOKEN, token],
-      [KEYS.USER,  JSON.stringify(user)],
-    ];
-    if (refreshToken) pairs.push([KEYS.REFRESH_TOKEN, refreshToken]);
-    await AsyncStorage.multiSet(pairs);
   },
 
   async getAuth() {
-    const [[, token], [, userStr], [, refreshToken]] = await AsyncStorage.multiGet([
-      KEYS.TOKEN, KEYS.USER, KEYS.REFRESH_TOKEN,
+    let [token, user] = await Promise.all([
+      SecureStore.getItemAsync(KEYS.TOKEN),
+      getSecureJson(KEYS.USER),
     ]);
-    return { token, user: userStr ? JSON.parse(userStr) : null, refreshToken };
+
+    if (!token && !user) {
+      const [[, legacyToken], [, legacyUserStr]] = await AsyncStorage.multiGet([KEYS.TOKEN, KEYS.USER]);
+      if (legacyToken || legacyUserStr) {
+        token = legacyToken ?? null;
+        user = legacyUserStr ? JSON.parse(legacyUserStr) : null;
+        if (token && user) {
+          await storage.saveAuth(token, user);
+        } else {
+          await AsyncStorage.multiRemove([KEYS.TOKEN, KEYS.USER]);
+        }
+      }
+    }
+
+    return { token, user };
   },
 
   async clearAuth() {
-    await AsyncStorage.multiRemove([KEYS.TOKEN, KEYS.USER, KEYS.REFRESH_TOKEN]);
+    await Promise.all([
+      SecureStore.deleteItemAsync(KEYS.TOKEN),
+      SecureStore.deleteItemAsync(KEYS.USER),
+      AsyncStorage.multiRemove([KEYS.TOKEN, KEYS.USER]),
+    ]);
   },
 
   // Draft shift (offline-first)

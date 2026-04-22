@@ -9,7 +9,7 @@ router.get('/low',       getLowStock);
 router.get('/',          getAllStock);
 router.post('/',         requireOwner, createStock);
 router.put('/:id',       requireOwner, updateStock);
-router.patch('/:id/adjust', adjustStock);
+router.patch('/:id/adjust', requireOwner, adjustStock);
 router.delete('/:id',    requireOwner, deleteStock);
 
 export default router;

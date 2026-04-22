@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 const saveSchema = z.object({
   date:          z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

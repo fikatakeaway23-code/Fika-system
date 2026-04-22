@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getRefreshToken, setRefreshToken, clearSession } from './auth.js';
+import { clearSession, getToken } from './auth.js';
 
 const BASE_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -13,53 +13,17 @@ export const api = axios.create({
 
 // Attach JWT stored in sessionStorage
 api.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('fika_token');
+  const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Silent refresh interceptor — on 401, try to refresh the token before redirecting
-let isRefreshing = false;
-let refreshQueue = [];
-
 api.interceptors.response.use(
   (res) => res,
-  async (err) => {
-    const original = err.config;
-    if (err.response?.status === 401 && !original._retry) {
-      original._retry = true;
-      const rToken = getRefreshToken();
-      if (!rToken) {
-        clearSession();
-        window.location.href = '/staff/login';
-        return Promise.reject(err);
-      }
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          refreshQueue.push({ resolve, reject });
-        }).then((token) => {
-          original.headers.Authorization = `Bearer ${token}`;
-          return api(original);
-        });
-      }
-      isRefreshing = true;
-      try {
-        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken: rToken });
-        sessionStorage.setItem('fika_token', data.token);
-        setRefreshToken(data.refreshToken);
-        refreshQueue.forEach((p) => p.resolve(data.token));
-        refreshQueue = [];
-        original.headers.Authorization = `Bearer ${data.token}`;
-        return api(original);
-      } catch {
-        refreshQueue.forEach((p) => p.reject(err));
-        refreshQueue = [];
-        clearSession();
-        window.location.href = '/staff/login';
-        return Promise.reject(err);
-      } finally {
-        isRefreshing = false;
-      }
+  (err) => {
+    if (err.response?.status === 401) {
+      clearSession();
+      window.location.href = '/staff/login';
     }
     return Promise.reject(err);
   },
@@ -68,8 +32,6 @@ api.interceptors.response.use(
 export const authApi = {
   login:     (role, pin) => api.post('/auth/login', { role, pin }),
   changePin: (data)      => api.post('/auth/change-pin', data),
-  refresh:   (refreshToken) => api.post('/auth/refresh', { refreshToken }),
-  logout:    (refreshToken) => api.post('/auth/logout', { refreshToken }),
 };
 
 export const shiftApi = {
@@ -102,16 +64,12 @@ export const membershipApi = {
   getById:         (id)        => api.get(`/memberships/${id}`),
   create:          (data)      => api.post('/memberships', data),
   update:          (id, data)  => api.put(`/memberships/${id}`, data),
-  addDrink:        (id, delta) => api.post(`/memberships/${id}/drinks`, { delta }), // legacy
   redeem:          (id, data)  => api.post(`/memberships/${id}/redeem`, data),
   getUsage:        (id, params)=> api.get(`/memberships/${id}/usage`,          { params }),
   getUsageSummary: (id, params)=> api.get(`/memberships/${id}/usage/summary`,  { params }),
   renew:           (id)        => api.post(`/memberships/${id}/renew`),
   createAccount:   (id, email) => api.post(`/memberships/${id}/member-account`, { email }),
   deleteAccount:   (id)        => api.delete(`/memberships/${id}/member-account`),
-  getQr:           (id)        => api.get(`/memberships/${id}/qr`),
-  getTopUpRequests: (status)   => api.get('/memberships/topup-requests', { params: status ? { status } : {} }),
-  updateTopUpRequest: (requestId, status) => api.patch(`/memberships/topup-requests/${requestId}`, { status }),
 };
 
 export const hrApi = {
@@ -130,12 +88,6 @@ export const reportApi = {
   monthly: (m, y) => api.get(`/reports/monthly/${m}/${y}`),
   weekly:  ()     => api.get('/reports/weekly'),
   drinks:  (p)    => api.get('/reports/drinks', { params: p }),
-};
-
-export const analyticsApi = {
-  mrr:         ()       => api.get('/analytics/mrr'),
-  renewals:    (days)   => api.get('/analytics/renewals', { params: { days } }),
-  leaderboard: (m, y)   => api.get('/analytics/leaderboard', { params: { month: m, year: y } }),
 };
 
 export const menuApi = {
@@ -207,4 +159,10 @@ export const checklistApi = {
   save:       (data)   => api.post('/checklist', data),
   get:        (params) => api.get('/checklist',  { params }),
   getHistory: (params) => api.get('/checklist/history', { params }),
+};
+
+export const analyticsApi = {
+  mrr:         () => api.get('/analytics/mrr'),
+  renewals:    (days = 30) => api.get('/analytics/renewals', { params: { days } }),
+  leaderboard: (month, year) => api.get('/analytics/leaderboard', { params: { month, year } }),
 };

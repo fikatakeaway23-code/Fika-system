@@ -9,10 +9,51 @@ import { AlertBanner } from '../../components/AlertBanner.jsx';
 import { Badge } from '../../components/Badge.jsx';
 import { colors, spacing, radius, fontSize, shadow } from '../../constants/theme.js';
 
-const TIERS = ['individual', 'team', 'corporate', 'enterprise'];
+const TIER_META = {
+  daily_pass:    { label: 'Daily Pass', color: colors.primary },
+  team_pack:     { label: 'Team Pack', color: '#F59E0B', allotment: 30 },
+  office_bundle: { label: 'Office Bundle', color: colors.secondary },
+};
+const TIERS = Object.keys(TIER_META);
 const STATUSES = ['active', 'pending', 'expired', 'cancelled'];
-const TIER_ALLOTMENT = { individual: 20, team: 50, corporate: 100, enterprise: 200 };
-const TIER_COLORS = { individual: colors.primary, team: '#F59E0B', corporate: colors.secondary, enterprise: '#7C3AED' };
+const TIER_COLORS = Object.fromEntries(Object.entries(TIER_META).map(([tier, meta]) => [tier, meta.color]));
+
+function formatTierLabel(tier) {
+  return TIER_META[tier]?.label ?? tier;
+}
+
+function getUsageMeta(membership) {
+  const used = membership.drinksUsed ?? 0;
+
+  if (membership.drinksRemaining !== null && membership.drinksRemaining !== undefined) {
+    const total = used + membership.drinksRemaining;
+    return {
+      limited: true,
+      used,
+      total,
+      remaining: membership.drinksRemaining,
+      pct: total > 0 ? Math.min((used / total) * 100, 100) : 0,
+      footer: `${membership.drinksRemaining} remaining`,
+    };
+  }
+
+  if (membership.tier === 'daily_pass') {
+    const dailyLimit = membership.drinksPerDay ?? membership.staffCount;
+    return {
+      limited: false,
+      used,
+      summary: `${used} drinks redeemed`,
+      footer: dailyLimit ? `${dailyLimit}/day allowance` : 'Daily allowance',
+    };
+  }
+
+  return {
+    limited: false,
+    used,
+    summary: `${used} drinks redeemed`,
+    footer: 'Unlimited plan',
+  };
+}
 
 function InfoRow({ label, value }) {
   return (
@@ -35,16 +76,13 @@ export function MembershipDetailScreen({ route, navigation }) {
     whatsapp:      membership.whatsapp      ?? '',
     monthlyFee:    String(membership.monthlyFee ?? ''),
     renewalDate:   membership.renewalDate   ?? '',
-    tier:          membership.tier          ?? 'team',
+    tier:          membership.tier          ?? 'team_pack',
     status:        membership.status        ?? 'active',
   });
   const [saveError, setSaveError] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
-
-  const totalDrinks = TIER_ALLOTMENT[membership.tier] ?? 0;
-  const used        = membership.drinksUsed      ?? 0;
-  const remaining   = membership.drinksRemaining ?? totalDrinks - used;
-  const usedPct     = totalDrinks > 0 ? Math.min((used / totalDrinks) * 100, 100) : 0;
+  const [drinkError, setDrinkError] = useState('');
+  const usage = getUsageMeta(membership);
 
   const { mutate: saveMutation, isPending: isSaving } = useMutation({
     mutationFn: (data) => membershipApi.update(membership.id, data),
@@ -59,12 +97,14 @@ export function MembershipDetailScreen({ route, navigation }) {
     onError: (err) => setSaveError(err?.response?.data?.message ?? 'Failed to save.'),
   });
 
-  const { mutate: addDrink, isPending: isDrinking } = useMutation({
-    mutationFn: (delta) => membershipApi.addDrink(membership.id, delta),
+  const { mutate: redeemDrink, isPending: isRedeeming } = useMutation({
+    mutationFn: (payload) => membershipApi.redeem(membership.id, payload),
     onSuccess: (res) => {
-      setMembership(res.data);
+      setMembership(res.data.membership);
+      setDrinkError('');
       qc.invalidateQueries({ queryKey: ['memberships'] });
     },
+    onError: (err) => setDrinkError(err?.response?.data?.error ?? 'Failed to log drink.'),
   });
 
   function openWhatsApp() {
@@ -107,31 +147,36 @@ export function MembershipDetailScreen({ route, navigation }) {
             <View style={styles.drinksHeader}>
               <Text style={styles.drinksTitle}>Drinks Usage</Text>
               <View style={{ flexDirection: 'row', gap: 4 }}>
-                <Badge variant={membership.tier ?? 'active'} />
-                <Badge variant={membership.status ?? 'active'} />
+                <Badge variant="active" label={formatTierLabel(membership.tier)} />
+                <Badge variant={membership.status ?? 'active'} label={membership.status ?? 'active'} />
               </View>
             </View>
-            <View style={styles.drinksTrack}>
-              <View style={[styles.drinksFill, { width: `${usedPct}%`, backgroundColor: usedPct > 90 ? colors.danger : colors.primary }]} />
-            </View>
-            <View style={styles.drinksCount}>
-              <Text style={styles.drinksUsed}>{used} used</Text>
-              <Text style={styles.drinksRemaining}>{remaining} remaining / {totalDrinks} total</Text>
-            </View>
-            <View style={styles.drinksBtns}>
+            {usage.limited ? (
+              <>
+                <View style={styles.drinksTrack}>
+                  <View style={[styles.drinksFill, { width: `${usage.pct}%`, backgroundColor: usage.pct > 90 ? colors.danger : colors.primary }]} />
+                </View>
+                <View style={styles.drinksCount}>
+                  <Text style={styles.drinksUsed}>{usage.used} used</Text>
+                  <Text style={styles.drinksRemaining}>{usage.remaining} remaining / {usage.total} total</Text>
+                </View>
+              </>
+            ) : (
+              <View style={styles.drinksMeta}>
+                <Text style={styles.drinksUsed}>{usage.summary}</Text>
+                <Text style={styles.drinksRemaining}>{usage.footer}</Text>
+              </View>
+            )}
+            {drinkError ? <AlertBanner variant="danger" message={drinkError} /> : null}
+            <View style={styles.drinksBtnsSingle}>
               <TouchableOpacity
-                style={[styles.drinkBtn, styles.drinkBtnMinus, isDrinking && { opacity: 0.5 }]}
-                onPress={() => used > 0 && addDrink(-1)}
-                disabled={isDrinking || used <= 0}
+                style={[styles.drinkBtn, styles.drinkBtnPlus, isRedeeming && { opacity: 0.5 }]}
+                onPress={() => redeemDrink({ count: 1 })}
+                disabled={isRedeeming || membership.status !== 'active'}
               >
-                <Text style={styles.drinkBtnText}>− Drink</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.drinkBtn, styles.drinkBtnPlus, isDrinking && { opacity: 0.5 }]}
-                onPress={() => addDrink(1)}
-                disabled={isDrinking}
-              >
-                <Text style={[styles.drinkBtnText, { color: colors.textInverse }]}>+ Drink</Text>
+                <Text style={[styles.drinkBtnText, { color: colors.textInverse }]}>
+                  {isRedeeming ? 'Logging…' : 'Log 1 Drink'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -154,7 +199,7 @@ export function MembershipDetailScreen({ route, navigation }) {
                     onPress={() => setEditForm((f) => ({ ...f, tier: t }))}
                   >
                     <Text style={[styles.optBtnText, editForm.tier === t && { color: colors.textInverse }]}>
-                      {t.charAt(0).toUpperCase() + t.slice(1)}
+                      {formatTierLabel(t)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -187,7 +232,7 @@ export function MembershipDetailScreen({ route, navigation }) {
               <InfoRow label="Staff Count"     value={membership.staffCount != null ? String(membership.staffCount) : undefined} />
               <InfoRow label="Monthly Fee"     value={membership.monthlyFee != null ? `NPR ${Number(membership.monthlyFee).toLocaleString()}` : undefined} />
               <InfoRow label="Renewal Date"    value={membership.renewalDate} />
-              <InfoRow label="Member Since"    value={membership.createdAt ? membership.createdAt.slice(0, 10) : undefined} />
+              <InfoRow label="Member Since"    value={membership.joinedDate ? membership.joinedDate.slice(0, 10) : membership.createdAt ? membership.createdAt.slice(0, 10) : undefined} />
 
               {membership.whatsapp && (
                 <TouchableOpacity style={styles.waBtn} onPress={openWhatsApp}>
@@ -239,11 +284,11 @@ const styles = StyleSheet.create({
   drinksTrack:  { height: 10, backgroundColor: colors.border, borderRadius: 5, overflow: 'hidden', marginBottom: spacing.sm },
   drinksFill:   { height: '100%', borderRadius: 5 },
   drinksCount:  { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.base },
+  drinksMeta:   { gap: spacing.xs, marginBottom: spacing.base },
   drinksUsed:   { fontSize: fontSize.sm, fontWeight: '700', color: colors.text },
   drinksRemaining: { fontSize: fontSize.sm, color: colors.textMuted },
-  drinksBtns:   { flexDirection: 'row', gap: spacing.sm },
+  drinksBtnsSingle: { flexDirection: 'row', marginTop: spacing.sm },
   drinkBtn:     { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: radius.md, borderWidth: 1 },
-  drinkBtnMinus:{ borderColor: colors.border, backgroundColor: colors.surface },
   drinkBtnPlus: { borderColor: colors.primary, backgroundColor: colors.primary },
   drinkBtnText: { fontSize: fontSize.base, fontWeight: '700', color: colors.text },
 

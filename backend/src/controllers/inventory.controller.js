@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 const inventorySchema = z.object({
   shiftId:         z.string(),
@@ -33,9 +33,45 @@ const espressoSchema = z.object({
   tasteAssessment: z.enum(['sour', 'balanced', 'bitter', 'flat']).optional(),
 });
 
+async function getAccessibleShift(shiftId, user) {
+  const shift = await prisma.shift.findUnique({
+    where: { id: shiftId },
+    select: { id: true, userId: true, status: true },
+  });
+
+  if (!shift) {
+    return { error: { status: 404, body: { error: 'Shift not found' } } };
+  }
+
+  if (user.role !== 'owner' && shift.userId !== user.id) {
+    return { error: { status: 403, body: { error: 'Access denied' } } };
+  }
+
+  if (user.role !== 'owner' && shift.status === 'submitted') {
+    return {
+      error: {
+        status: 400,
+        body: { error: 'Cannot edit records for a submitted shift' },
+      },
+    };
+  }
+
+  return { shift };
+}
+
 export async function upsertInventory(req, res, next) {
   try {
     const { type, ...rest } = req.body;
+    const shiftId = rest.shiftId;
+
+    if (!shiftId) {
+      return res.status(400).json({ error: 'shiftId is required' });
+    }
+
+    const access = await getAccessibleShift(shiftId, req.user);
+    if (access.error) {
+      return res.status(access.error.status).json(access.error.body);
+    }
 
     if (type === 'waste') {
       const data = wasteSchema.parse(rest);
@@ -73,6 +109,19 @@ export async function upsertInventory(req, res, next) {
 export async function getInventory(req, res, next) {
   try {
     const { id } = req.params;
+    const shift = await prisma.shift.findUnique({
+      where: { id },
+      select: { id: true, userId: true },
+    });
+
+    if (!shift) {
+      return res.status(404).json({ error: 'Shift not found' });
+    }
+
+    if (req.user.role !== 'owner' && shift.userId !== req.user.id) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
     const [inventory, waste, espresso] = await Promise.all([
       prisma.inventoryLog.findUnique({ where: { shiftId: id } }),
       prisma.wasteLog.findUnique({ where: { shiftId: id } }),

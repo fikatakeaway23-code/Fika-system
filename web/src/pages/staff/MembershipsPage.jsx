@@ -1,17 +1,66 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { membershipApi } from '../../lib/api.js';
-import { renewalReminderLink, topUpAckLink } from '../../lib/whatsapp.js';
 
-const TIERS   = ['individual', 'team', 'corporate', 'enterprise'];
-const ALLOTMENT = { individual: 20, team: 50, corporate: 100, enterprise: 200 };
-const TIER_COLORS = { individual: '#6BCB77', team: '#F59E0B', corporate: '#2D6A4F', enterprise: '#7C3AED' };
+const TODAY = new Date().toISOString().slice(0, 10);
+const TIER_META = {
+  daily_pass:    { label: 'Daily Pass',    color: '#6BCB77' },
+  team_pack:     { label: 'Team Pack',     color: '#F59E0B', allotment: 30 },
+  office_bundle: { label: 'Office Bundle', color: '#2D6A4F' },
+};
+const TIERS = Object.keys(TIER_META);
+const INITIAL_ADD_FORM = {
+  companyName: '',
+  contactPerson: '',
+  whatsapp: '',
+  tier: 'team_pack',
+  staffCount: '',
+  monthlyFee: '',
+  renewalDate: '',
+  joinedDate: TODAY,
+};
+
+function formatTierLabel(tier) {
+  return TIER_META[tier]?.label ?? tier;
+}
+
+function getUsageMeta(membership) {
+  const used = membership.drinksUsed ?? 0;
+
+  if (membership.drinksRemaining !== null && membership.drinksRemaining !== undefined) {
+    const total = used + membership.drinksRemaining;
+    return {
+      limited: true,
+      used,
+      total,
+      pct: total > 0 ? Math.min((used / total) * 100, 100) : 0,
+      footer: `${membership.drinksRemaining} remaining`,
+    };
+  }
+
+  if (membership.tier === 'daily_pass') {
+    const dailyLimit = membership.drinksPerDay ?? membership.staffCount;
+    return {
+      limited: false,
+      used,
+      summary: `${used} drinks redeemed`,
+      footer: dailyLimit ? `${dailyLimit}/day allowance` : 'Daily allowance',
+    };
+  }
+
+  return {
+    limited: false,
+    used,
+    summary: `${used} drinks redeemed`,
+    footer: 'Unlimited plan',
+  };
+}
 
 function TierBadge({ tier }) {
-  const color = TIER_COLORS[tier] ?? '#718096';
+  const color = TIER_META[tier]?.color ?? '#718096';
   return (
     <span className="text-xs font-bold px-2 py-0.5 rounded-full border" style={{ color, borderColor: color + '60', backgroundColor: color + '15' }}>
-      {tier}
+      {formatTierLabel(tier)}
     </span>
   );
 }
@@ -21,16 +70,25 @@ function StatusBadge({ status }) {
   return <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${map[status] ?? 'bg-gray-100 text-gray-600'}`}>{status}</span>;
 }
 
-function DrinkBar({ used, tier }) {
-  const total = ALLOTMENT[tier] ?? 0;
-  const pct   = total > 0 ? Math.min((used / total) * 100, 100) : 0;
-  const color = pct > 90 ? '#EF4444' : '#6BCB77';
+function DrinkBar({ membership }) {
+  const usage = getUsageMeta(membership);
+  const color = usage.limited && usage.pct > 90 ? '#EF4444' : '#6BCB77';
+
+  if (!usage.limited) {
+    return (
+      <div className="space-y-1">
+        <p className="text-xs font-medium text-gray-900">{usage.summary}</p>
+        <p className="text-xs text-muted">{usage.footer}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
+        <div className="h-full rounded-full transition-all" style={{ width: `${usage.pct}%`, backgroundColor: color }} />
       </div>
-      <span className="text-xs text-muted">{used}/{total}</span>
+      <span className="text-xs text-muted">{usage.used}/{usage.total}</span>
     </div>
   );
 }
@@ -199,13 +257,6 @@ function PortalAccountModal({ membership, onClose }) {
   const [result, setResult]   = useState(null);
   const [error, setError]     = useState('');
 
-  const { data: qrData, isLoading: qrLoading, isError: qrError } = useQuery({
-    queryKey: ['membership-qr', membership.id],
-    queryFn:  () => membershipApi.getQr(membership.id).then((r) => r.data),
-    enabled:  !!result,
-    staleTime: Infinity,
-  });
-
   async function handleCreate() {
     if (!email.trim()) return;
     setLoading(true);
@@ -240,43 +291,6 @@ function PortalAccountModal({ membership, onClose }) {
                 </div>
               </div>
               <p className="text-xs text-gray-400 mt-3">Share with client via WhatsApp. They must change it on first login.</p>
-            </div>
-            {/* QR Code */}
-            <div className="mt-4 flex flex-col items-center gap-2">
-              <p className="text-xs text-gray-400">Scan to open member portal</p>
-              {qrLoading ? (
-                <div className="w-[180px] h-[180px] bg-gray-50 rounded-lg flex items-center justify-center">
-                  <span className="text-xs text-gray-400">Loading...</span>
-                </div>
-              ) : qrError ? (
-                <p className="text-xs text-red-500">Could not load QR code.</p>
-              ) : qrData?.qrDataUrl ? (
-                <>
-                  <img
-                    src={qrData.qrDataUrl}
-                    alt="Member portal QR"
-                    className="w-[180px] h-[180px] rounded-lg border border-gray-100"
-                  />
-                  <button
-                    onClick={() => {
-                      const safeName = membership.companyName.replace(/[^a-z0-9\-_ ]/gi, '_');
-                      fetch(qrData.qrDataUrl)
-                        .then(r => r.blob())
-                        .then(blob => {
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `fika-qr-${safeName}.png`;
-                          a.click();
-                          URL.revokeObjectURL(url);
-                        });
-                    }}
-                    className="text-xs text-blue-500 hover:underline"
-                  >
-                    Download QR
-                  </button>
-                </>
-              ) : null}
             </div>
             <button onClick={onClose} className="w-full text-sm font-semibold text-gray-700 border border-gray-200 py-2.5 rounded-xl hover:bg-gray-50">
               Done
@@ -317,7 +331,7 @@ function PortalAccountModal({ membership, onClose }) {
 export function MembershipsPage() {
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd]   = useState(false);
-  const [addForm, setAddForm]   = useState({ companyName: '', contactPerson: '', whatsapp: '', tier: 'team', staffCount: '', monthlyFee: '', renewalDate: '' });
+  const [addForm, setAddForm]   = useState(INITIAL_ADD_FORM);
   const [addError, setAddError] = useState('');
   const qc = useQueryClient();
 
@@ -329,13 +343,13 @@ export function MembershipsPage() {
 
   const { mutate: addMember, isPending: isAdding } = useMutation({
     mutationFn: (data) => membershipApi.create(data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['memberships-web'] }); setShowAdd(false); setAddError(''); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['memberships-web'] });
+      setShowAdd(false);
+      setAddError('');
+      setAddForm(INITIAL_ADD_FORM);
+    },
     onError: (err) => setAddError(err?.response?.data?.message ?? 'Failed.'),
-  });
-
-  const { mutate: addDrink } = useMutation({
-    mutationFn: ({ id, delta }) => membershipApi.addDrink(id, delta),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['memberships-web'] }),
   });
 
   const { mutate: updateMember } = useMutation({
@@ -343,40 +357,35 @@ export function MembershipsPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['memberships-web'] }),
   });
 
-  const { data: topUpData } = useQuery({
-    queryKey:        ['topup-requests-memberships'],
-    queryFn:         () => membershipApi.getTopUpRequests('pending').then((r) => r.data),
-    staleTime:       30_000,
-    refetchInterval: 60_000,
-  });
-  const pendingRequests = topUpData?.requests ?? [];
-
-  const ackTopUp = useMutation({
-    mutationFn: ({ requestId, status }) => membershipApi.updateTopUpRequest(requestId, status),
-    onSuccess:  () => {
-      qc.invalidateQueries({ queryKey: ['topup-requests-memberships'] });
-      qc.invalidateQueries({ queryKey: ['topup-pending-count'] });
-    },
-  });
-
   function handleAdd(e) {
     e.preventDefault();
     if (!addForm.companyName.trim()) { setAddError('Company name required.'); return; }
-    addMember({ ...addForm, staffCount: parseInt(addForm.staffCount) || undefined, monthlyFee: parseFloat(addForm.monthlyFee) || undefined, status: 'active' });
-  }
+    if (!addForm.contactPerson.trim()) { setAddError('Contact person required.'); return; }
+    if (!addForm.whatsapp.trim()) { setAddError('WhatsApp required.'); return; }
+    if (!addForm.staffCount) { setAddError('Staff count required.'); return; }
+    if (!addForm.monthlyFee) { setAddError('Monthly fee required.'); return; }
+    if (!addForm.joinedDate) { setAddError('Joined date required.'); return; }
 
-  const [redeemTarget, setRedeemTarget] = useState(null);
-  const [usageTarget,  setUsageTarget]  = useState(null);
-  const [portalTarget, setPortalTarget] = useState(null);
-  const [showOverdue, setShowOverdue] = useState(false);
+    addMember({
+      companyName: addForm.companyName.trim(),
+      contactPerson: addForm.contactPerson.trim(),
+      whatsapp: addForm.whatsapp.trim(),
+      tier: addForm.tier,
+      staffCount: parseInt(addForm.staffCount, 10) || undefined,
+      monthlyFee: parseFloat(addForm.monthlyFee) || undefined,
+      renewalDate: addForm.renewalDate || undefined,
+      joinedDate: addForm.joinedDate,
+      status: 'active',
+    });
+  }
 
   const active  = memberships?.filter((m) => m.status === 'active')  ?? [];
   const others  = memberships?.filter((m) => m.status !== 'active')  ?? [];
   const selMem  = memberships?.find((m) => m.id === selected);
-  const overdueList = (memberships ?? []).filter(
-    (m) => m.status === 'active' && m.renewalDate && new Date(m.renewalDate) < new Date()
-  );
-  const displayed = showOverdue ? overdueList : [...active, ...others];
+
+  const [redeemTarget, setRedeemTarget] = useState(null);
+  const [usageTarget,  setUsageTarget]  = useState(null);
+  const [portalTarget, setPortalTarget] = useState(null);
 
   function daysUntilRenewal(renewalDate) {
     if (!renewalDate) return null;
@@ -386,21 +395,9 @@ export function MembershipsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-extrabold text-gray-900">Memberships</h1>
-          <button
-            onClick={() => setShowOverdue((v) => !v)}
-            className={`text-xs font-bold px-3 py-1 rounded-full border transition-colors ${
-              showOverdue
-                ? 'bg-red-600 text-white border-red-600'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-red-400 hover:text-red-600'
-            }`}
-          >
-            {showOverdue ? `Overdue (${overdueList.length})` : 'Overdue'}
-          </button>
-        </div>
-        <button onClick={() => setShowAdd(!showAdd)} className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary/90 transition-colors">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-extrabold text-gray-900">Memberships</h1>
+        <button onClick={() => { setShowAdd(!showAdd); setAddError(''); }} className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary/90 transition-colors">
           {showAdd ? '✕ Cancel' : '+ Add Membership'}
         </button>
       </div>
@@ -413,21 +410,22 @@ export function MembershipsPage() {
           <form onSubmit={handleAdd} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { key: 'companyName',   label: 'Company Name *', placeholder: 'e.g. Kathmandu Corp' },
-              { key: 'contactPerson', label: 'Contact Person',  placeholder: 'Full name' },
-              { key: 'whatsapp',      label: 'WhatsApp',        placeholder: '+977 98XXXXXXXX' },
-              { key: 'monthlyFee',    label: 'Monthly Fee (NPR)', placeholder: '0' },
-              { key: 'staffCount',    label: 'Staff Count',     placeholder: '0' },
-              { key: 'renewalDate',   label: 'Renewal Date',    placeholder: 'YYYY-MM-DD' },
-            ].map(({ key, label, placeholder }) => (
+              { key: 'contactPerson', label: 'Contact Person *', placeholder: 'Full name' },
+              { key: 'whatsapp',      label: 'WhatsApp *',       placeholder: '+977 98XXXXXXXX' },
+              { key: 'monthlyFee',    label: 'Monthly Fee (NPR) *', placeholder: '0', type: 'number' },
+              { key: 'staffCount',    label: 'Staff Count *',    placeholder: '0', type: 'number' },
+              { key: 'joinedDate',    label: 'Joined Date *',    placeholder: 'YYYY-MM-DD', type: 'date' },
+              { key: 'renewalDate',   label: 'Renewal Date',     placeholder: 'YYYY-MM-DD', type: 'date' },
+            ].map(({ key, label, placeholder, type }) => (
               <div key={key}>
                 <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-1">{label}</label>
-                <input value={addForm[key]} onChange={(e) => setAddForm((f) => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary" />
+                <input type={type ?? 'text'} value={addForm[key]} onChange={(e) => setAddForm((f) => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary" />
               </div>
             ))}
             <div>
               <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-1">Tier</label>
               <select value={addForm.tier} onChange={(e) => setAddForm((f) => ({ ...f, tier: e.target.value }))} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary bg-white">
-                {TIERS.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
+                {TIERS.map((t) => <option key={t} value={t}>{formatTierLabel(t)}</option>)}
               </select>
             </div>
             <div className="sm:col-span-2 lg:col-span-3 flex justify-end">
@@ -436,48 +434,6 @@ export function MembershipsPage() {
               </button>
             </div>
           </form>
-        </div>
-      )}
-
-      {pendingRequests.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-amber-800">
-              {pendingRequests.length} Pending Top-up Request{pendingRequests.length !== 1 ? 's' : ''}
-            </span>
-          </div>
-          <div className="space-y-2">
-            {pendingRequests.map((req) => (
-              <div key={req.id} className="bg-white rounded-xl border border-amber-100 p-3 flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{req.membership.companyName}</p>
-                  {req.message && (
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{req.message}</p>
-                  )}
-                  <p className="text-[11px] text-gray-400 mt-0.5">
-                    {new Date(req.requestedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                    {req.membership.drinksRemaining != null && ` · ${req.membership.drinksRemaining} drinks remaining`}
-                  </p>
-                </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => ackTopUp.mutate({ requestId: req.id, status: 'acknowledged' })}
-                    disabled={ackTopUp.isPending}
-                    className="px-3 py-1.5 text-xs font-bold border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors disabled:opacity-50"
-                  >
-                    Acknowledge
-                  </button>
-                  <button
-                    onClick={() => ackTopUp.mutate({ requestId: req.id, status: 'fulfilled' })}
-                    disabled={ackTopUp.isPending}
-                    className="px-3 py-1.5 text-xs font-bold bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors disabled:opacity-50"
-                  >
-                    Fulfilled ✓
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
@@ -499,14 +455,14 @@ export function MembershipsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {displayed.map((m) => (
+                {[...active, ...others].map((m) => (
                   <tr key={m.id} className={`hover:bg-surface cursor-pointer transition-colors ${selected === m.id ? 'bg-primary/5' : ''}`} onClick={() => setSelected(m.id === selected ? null : m.id)}>
                     <td className="px-4 py-3">
                       <p className="font-semibold text-gray-900">{m.companyName}</p>
                       {m.contactPerson && <p className="text-xs text-muted">{m.contactPerson}</p>}
                     </td>
                     <td className="px-4 py-3"><TierBadge tier={m.tier} /></td>
-                    <td className="px-4 py-3 hidden md:table-cell w-36"><DrinkBar used={m.drinksUsed ?? 0} tier={m.tier} /></td>
+                    <td className="px-4 py-3 hidden md:table-cell w-36"><DrinkBar membership={m} /></td>
                     <td className="px-4 py-3"><StatusBadge status={m.status} /></td>
                   </tr>
                 ))}
@@ -542,30 +498,34 @@ export function MembershipsPage() {
             </div>
 
             {/* Drinks usage */}
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-muted">Drinks used</span>
-                <span className="font-bold text-gray-900">
-                  {selMem.drinksUsed ?? 0}
-                  {selMem.drinksRemaining != null
-                    ? ` / ${(selMem.drinksUsed ?? 0) + selMem.drinksRemaining}`
-                    : ''}
-                </span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{
-                    width: selMem.drinksRemaining != null
-                      ? `${Math.min(((selMem.drinksUsed ?? 0) / ((selMem.drinksUsed ?? 0) + selMem.drinksRemaining)) * 100, 100)}%`
-                      : `${Math.min(((selMem.drinksUsed ?? 0) / (ALLOTMENT[selMem.tier] ?? 1)) * 100, 100)}%`,
-                  }}
-                />
-              </div>
-              {selMem.drinksRemaining != null && (
-                <p className="text-xs text-muted mt-1">{selMem.drinksRemaining} remaining</p>
-              )}
-            </div>
+            {(() => {
+              const usage = getUsageMeta(selMem);
+              return (
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-muted">Drinks used</span>
+                    <span className="font-bold text-gray-900">
+                      {usage.limited ? `${usage.used} / ${usage.total}` : usage.summary}
+                    </span>
+                  </div>
+                  {usage.limited ? (
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all"
+                        style={{ width: `${usage.pct}%` }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="rounded-xl bg-surface px-3 py-2 text-xs text-muted">
+                      {usage.footer}
+                    </div>
+                  )}
+                  {usage.limited && (
+                    <p className="text-xs text-muted mt-1">{usage.footer}</p>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Action buttons */}
             <div className="flex gap-2">
@@ -588,35 +548,6 @@ export function MembershipsPage() {
                 Portal
               </button>
             </div>
-
-            {/* WhatsApp quick actions */}
-            {selMem.whatsapp && (
-              <div className="flex gap-2">
-                <a
-                  href={renewalReminderLink({
-                    phone:       selMem.whatsapp,
-                    companyName: selMem.companyName,
-                    monthlyFee:  selMem.monthlyFee,
-                    renewalDate: selMem.renewalDate,
-                  })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Send renewal reminder on WhatsApp"
-                  className="flex-1 py-2 border border-green-200 rounded-xl text-xs font-bold text-green-700 hover:bg-green-50 transition-colors text-center"
-                >
-                  📲 Renewal
-                </a>
-                <a
-                  href={topUpAckLink({ phone: selMem.whatsapp, companyName: selMem.companyName })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Send top-up acknowledgement on WhatsApp"
-                  className="flex-1 py-2 border border-green-200 rounded-xl text-xs font-bold text-green-700 hover:bg-green-50 transition-colors text-center"
-                >
-                  📲 Top-up
-                </a>
-              </div>
-            )}
 
             {/* Info */}
             {[

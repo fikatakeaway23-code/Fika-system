@@ -10,9 +10,6 @@ import {
   getUsage,
   getUsageSummary,
   renewMembership,
-  getMemberQrCode,
-  getTopUpRequests,
-  updateTopUpRequest,
 } from '../controllers/membership.controller.js';
 import {
   createMemberAccount,
@@ -21,10 +18,6 @@ import {
 import { authenticate, requireOwner } from '../middleware/auth.middleware.js';
 
 const router = Router();
-
-// Top-up request management (must be before /:id routes)
-router.get('/topup-requests',              authenticate, requireOwner, getTopUpRequests);
-router.patch('/topup-requests/:requestId', authenticate, requireOwner, updateTopUpRequest);
 
 // Owner-only routes
 router.post('/',      authenticate, requireOwner, createMembership);
@@ -45,6 +38,5 @@ router.get('/:id/usage/summary',     authenticate, requireOwner, getUsageSummary
 router.post('/:id/renew',            authenticate, requireOwner, renewMembership);
 router.post('/:id/member-account',   authenticate, requireOwner, createMemberAccount);
 router.delete('/:id/member-account', authenticate, requireOwner, deleteMemberAccount);
-router.get('/:id/qr', authenticate, requireOwner, getMemberQrCode);
 
 export default router;

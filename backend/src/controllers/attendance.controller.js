@@ -1,7 +1,7 @@
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 // Shift start times (24h hour)
-const SHIFT_START = { am: 8, pm: 14 };
+const SHIFT_START = { am: 6, pm: 12 };
 
 function calcLateness(shiftType, arrivalTime) {
   const start = SHIFT_START[shiftType] ?? 8;

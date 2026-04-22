@@ -9,23 +9,22 @@ import { Badge } from '../../components/Badge.jsx';
 import { AlertBanner } from '../../components/AlertBanner.jsx';
 import { colors, spacing, radius, fontSize, shadow } from '../../constants/theme.js';
 
+const TODAY = new Date().toISOString().slice(0, 10);
 const TIERS = [
-  { value: 'individual', label: 'Individual', allotment: 20 },
-  { value: 'team',       label: 'Team',       allotment: 50 },
-  { value: 'corporate',  label: 'Corporate',  allotment: 100 },
-  { value: 'enterprise', label: 'Enterprise', allotment: 200 },
+  { value: 'daily_pass',    label: 'Daily Pass' },
+  { value: 'team_pack',     label: 'Team Pack', allotment: 30 },
+  { value: 'office_bundle', label: 'Office Bundle' },
 ];
 
 const TIER_COLORS = {
-  individual: colors.primary,
-  team:       '#F59E0B',
-  corporate:  colors.secondary,
-  enterprise: '#7C3AED',
+  daily_pass:    colors.primary,
+  team_pack:     '#F59E0B',
+  office_bundle: colors.secondary,
 };
 
 const EMPTY_FORM = {
   companyName: '', contactPerson: '', whatsapp: '',
-  tier: 'team', staffCount: '', monthlyFee: '', renewalDate: '',
+  tier: 'team_pack', staffCount: '', monthlyFee: '', renewalDate: '', joinedDate: TODAY,
 };
 
 function TierBadge({ tier }) {
@@ -38,15 +37,31 @@ function TierBadge({ tier }) {
   );
 }
 
-function DrinksBar({ used, remaining }) {
-  const total = (used ?? 0) + (remaining ?? 0);
-  const pct   = total > 0 ? Math.min(((used ?? 0) / total) * 100, 100) : 0;
+function DrinksBar({ membership }) {
+  const used = membership.drinksUsed ?? 0;
+  const remaining = membership.drinksRemaining;
+
+  if (remaining === null || remaining === undefined) {
+    const note = membership.tier === 'daily_pass'
+      ? `${membership.drinksPerDay ?? membership.staffCount ?? 0}/day allowance`
+      : 'Unlimited plan';
+
+    return (
+      <View style={styles.drinksMeta}>
+        <Text style={styles.drinksSummary}>{used} drinks redeemed</Text>
+        <Text style={styles.drinksNote}>{note}</Text>
+      </View>
+    );
+  }
+
+  const total = used + remaining;
+  const pct   = total > 0 ? Math.min((used / total) * 100, 100) : 0;
   return (
     <View style={styles.drinksRow}>
       <View style={styles.drinksTrack}>
         <View style={[styles.drinksFill, { width: `${pct}%` }]} />
       </View>
-      <Text style={styles.drinksText}>{used ?? 0} / {total} used</Text>
+      <Text style={styles.drinksText}>{used} / {total} used</Text>
     </View>
   );
 }
@@ -54,6 +69,12 @@ function DrinksBar({ used, remaining }) {
 function AddModal({ visible, onClose, onSave, isPending, error }) {
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
+
+  React.useEffect(() => {
+    if (!visible) {
+      setForm({ ...EMPTY_FORM, joinedDate: TODAY });
+    }
+  }, [visible]);
 
   function handleSubmit() {
     onSave({
@@ -64,6 +85,7 @@ function AddModal({ visible, onClose, onSave, isPending, error }) {
       staffCount:    parseInt(form.staffCount)    || undefined,
       monthlyFee:    parseFloat(form.monthlyFee)  || undefined,
       renewalDate:   form.renewalDate             || undefined,
+      joinedDate:    form.joinedDate              || TODAY,
       status:        'active',
     });
   }
@@ -86,6 +108,7 @@ function AddModal({ visible, onClose, onSave, isPending, error }) {
             <Field label="WhatsApp Number"  value={form.whatsapp}      onChange={(v) => set({ whatsapp: v })}      placeholder="+977 98XXXXXXXX" keyboardType="phone-pad" />
             <Field label="Monthly Fee (NPR)" value={form.monthlyFee}   onChange={(v) => set({ monthlyFee: v })}    keyboardType="decimal-pad" />
             <Field label="Staff Count"      value={form.staffCount}    onChange={(v) => set({ staffCount: v })}    keyboardType="number-pad" />
+            <Field label="Joined Date"      value={form.joinedDate}    onChange={(v) => set({ joinedDate: v })}    placeholder="YYYY-MM-DD" />
             <Field label="Renewal Date"     value={form.renewalDate}   onChange={(v) => set({ renewalDate: v })}   placeholder="YYYY-MM-DD" />
 
             <Text style={modal.tierLabel}>Tier</Text>
@@ -201,7 +224,7 @@ function MemberCard({ m, onPress }) {
           <Badge variant={m.status} />
         </View>
       </View>
-      <DrinksBar used={m.drinksUsed} remaining={m.drinksRemaining} />
+      <DrinksBar membership={m} />
       {m.monthlyFee && (
         <Text style={styles.fee}>NPR {Number(m.monthlyFee).toLocaleString()} / month</Text>
       )}
@@ -242,6 +265,9 @@ const styles = StyleSheet.create({
   drinksTrack: { flex: 1, height: 6, backgroundColor: colors.border, borderRadius: 3, overflow: 'hidden' },
   drinksFill:  { height: '100%', backgroundColor: colors.primary, borderRadius: 3 },
   drinksText:  { fontSize: fontSize.xs, color: colors.textMuted, width: 80, textAlign: 'right' },
+  drinksMeta:  { gap: 2 },
+  drinksSummary: { fontSize: fontSize.xs, fontWeight: '600', color: colors.text },
+  drinksNote:    { fontSize: fontSize.xs, color: colors.textMuted },
 });
 
 const modal = StyleSheet.create({

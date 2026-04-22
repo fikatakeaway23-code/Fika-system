@@ -5,10 +5,7 @@ import { setToken, setAccount } from '../lib/auth.js';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email,    setEmail]    = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('email') ?? '';
-  });
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
@@ -20,7 +17,10 @@ export function LoginPage() {
     try {
       const res = await memberApi.login(email, password);
       setToken(res.data.token);
-      setAccount(res.data.account);
+      setAccount({
+        ...res.data.account,
+        mustChangePassword: res.data.mustChangePassword,
+      });
       navigate(res.data.mustChangePassword ? '/profile' : '/', { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Check your credentials.');

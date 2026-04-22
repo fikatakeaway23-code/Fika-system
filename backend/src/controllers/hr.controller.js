@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
-export const hrSchema = z.object({
+const hrSchema = z.object({
   staffMember:         z.string(),
   shift:               z.enum(['am', 'pm']).optional(),
   recordType:          z.enum(['attendance', 'leave', 'incident', 'salary_change', 'performance']),
@@ -98,6 +98,21 @@ export async function getHRByStaff(req, res, next) {
 export async function updateHRRecord(req, res, next) {
   try {
     const data = hrSchema.partial().parse(req.body);
+    const dateString = data.date;
+
+    if (data.arrivalTime) {
+      let arrivalDate = dateString;
+      if (!arrivalDate) {
+        const existing = await prisma.hRRecord.findUnique({
+          where: { id: req.params.id },
+          select: { date: true },
+        });
+        if (!existing) return res.status(404).json({ error: 'HR record not found' });
+        arrivalDate = existing.date.toISOString().slice(0, 10);
+      }
+      data.arrivalTime = new Date(`${arrivalDate}T${data.arrivalTime}`);
+    }
+
     if (data.date)         data.date         = new Date(data.date);
     if (data.followUpDate) data.followUpDate = new Date(data.followUpDate);
 

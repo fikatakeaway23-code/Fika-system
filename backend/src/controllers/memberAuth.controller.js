@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
@@ -70,6 +70,7 @@ export async function changeMemberPassword(req, res, next) {
     const account = await prisma.memberAccount.findUnique({
       where: { id: req.member.accountId },
     });
+    if (!account) return res.status(404).json({ error: 'Account not found' });
     const valid = await bcrypt.compare(currentPassword, account.passwordHash);
     if (!valid) return res.status(401).json({ error: 'Current password is incorrect' });
 

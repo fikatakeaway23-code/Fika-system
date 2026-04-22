@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 export async function getMonthlyReport(req, res, next) {
   try {
@@ -29,10 +29,11 @@ export async function getMonthlyReport(req, res, next) {
     ]);
 
     // Revenue summary
-    const totalRevenue  = finance.reduce((s, r) => s + (r.posTotal      ?? 0), 0);
-    const totalExpenses = finance.reduce((s, r) => s + (r.totalExpenses ?? 0), 0);
-    const netProfit     = finance.reduce((s, r) => s + (r.netProfit     ?? 0), 0);
-    const adHocExpenses = expenses.reduce((s, e) => s + e.amount, 0);
+    const totalRevenue    = finance.reduce((s, r) => s + (r.posTotal      ?? 0), 0);
+    const financeExpenses = finance.reduce((s, r) => s + (r.totalExpenses ?? 0), 0);
+    const adHocExpenses   = expenses.reduce((s, e) => s + e.amount, 0);
+    const totalExpenses   = financeExpenses + adHocExpenses;
+    const netProfit       = totalRevenue - totalExpenses;
 
     // Drinks
     const totalDrinks = shifts.reduce((s, sh) => s + (sh.drinksCount ?? 0), 0);
@@ -58,12 +59,43 @@ export async function getMonthlyReport(req, res, next) {
 
     // Discrepancy count
     const discrepancies = finance.filter((r) => r.discrepancyFlag).length;
+    const adHocByDate = expenses.reduce((acc, expense) => {
+      const key = new Date(expense.date).toISOString().split('T')[0];
+      acc[key] = (acc[key] ?? 0) + expense.amount;
+      return acc;
+    }, {});
+    const dailyBreakdownMap = new Map();
+
+    for (const record of finance) {
+      const key = new Date(record.date).toISOString().split('T')[0];
+      const extraExpense = adHocByDate[key] ?? 0;
+      dailyBreakdownMap.set(key, {
+        date: key,
+        revenue: record.posTotal ?? 0,
+        expenses: (record.totalExpenses ?? 0) + extraExpense,
+        netProfit: (record.posTotal ?? 0) - ((record.totalExpenses ?? 0) + extraExpense),
+        discrepancy: record.discrepancyFlag,
+      });
+    }
+
+    for (const [date, extraExpense] of Object.entries(adHocByDate)) {
+      if (!dailyBreakdownMap.has(date)) {
+        dailyBreakdownMap.set(date, {
+          date,
+          revenue: 0,
+          expenses: extraExpense,
+          netProfit: -extraExpense,
+          discrepancy: false,
+        });
+      }
+    }
 
     res.json({
       month, year,
       revenue: {
         total:          totalRevenue,
         expenses:       totalExpenses,
+        financeExpenses,
         adHocExpenses,
         netProfit,
         profitMargin:   totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0,
@@ -77,13 +109,7 @@ export async function getMonthlyReport(req, res, next) {
         totalMilkWasted,
         totalRemadeDrinks,
       },
-      dailyBreakdown: finance.map((r) => ({
-        date:       r.date,
-        revenue:    r.posTotal,
-        expenses:   r.totalExpenses,
-        netProfit:  r.netProfit,
-        discrepancy: r.discrepancyFlag,
-      })),
+      dailyBreakdown: Array.from(dailyBreakdownMap.values()).sort((a, b) => a.date.localeCompare(b.date)),
       wasteEntries: {
         totalEntries: wasteEntries.length,
         estimatedCostLoss: totalWasteCost,

@@ -13,7 +13,9 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "postinstall": "prisma generate",
+    "test:smoke": "node --test tests/smoke.test.js"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",

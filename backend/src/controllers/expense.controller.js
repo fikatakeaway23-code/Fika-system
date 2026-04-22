@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
+import { prisma } from '../lib/prisma.js';
 
 const expenseSchema = z.object({
   name:             z.string().min(1).max(200),
@@ -17,6 +17,15 @@ export async function createExpense(req, res, next) {
   try {
     const input = expenseSchema.parse(req.body);
     const dateObj = new Date(input.date);
+    const allowedPaidBy = {
+      owner: ['owner', 'shop_cash', 'barista1', 'barista2'],
+      barista_am: ['barista1', 'shop_cash'],
+      barista_pm: ['barista2', 'shop_cash'],
+    };
+
+    if (!(allowedPaidBy[req.user.role] || []).includes(input.paidBy)) {
+      return res.status(403).json({ error: 'You cannot log an expense for that payer' });
+    }
 
     const expense = await prisma.expense.create({
       data: {

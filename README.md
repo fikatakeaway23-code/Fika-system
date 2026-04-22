@@ -21,6 +21,7 @@ fika-system/
 ├── backend/             # Node.js + Express + PostgreSQL + Prisma
 ├── mobile/              # React Native + Expo SDK 51
 ├── web/                 # React + Vite + Tailwind CSS
+├── member-portal/       # Client membership portal (React + Vite)
 ├── docs/                # All documentation
 └── package.json         # Root monorepo scripts
 ```
@@ -55,7 +56,7 @@ npm run db:push
 npm run db:seed
 ```
 
-### 4. Start backend + web together
+### 4. Start backend + staff web together
 
 ```bash
 npm run dev
@@ -65,6 +66,12 @@ npm run dev
 
 ```bash
 cd mobile && npx expo start
+```
+
+### 6. Start member portal (separate terminal)
+
+```bash
+npm run dev:member-portal
 ```
 
 ---
@@ -88,7 +95,8 @@ cd mobile && npx expo start
 | Backend  | Node.js 20, Express 4, PostgreSQL 15, Prisma ORM   |
 | Mobile   | React Native, Expo SDK 51, Zustand, React Query    |
 | Web      | React 18, Vite 5, Tailwind CSS 3, Chart.js         |
-| Auth     | PIN-based, JWT (8-hour expiry)                     |
+| Portal   | React 18, Vite 5, React Query                      |
+| Auth     | PIN-based staff auth + member JWT sessions         |
 | Sync     | Notion API (manual owner-triggered)                |
 
 ---
@@ -118,7 +126,7 @@ cd mobile && npx expo start
 - [API Reference](docs/API.md)
 - [Staff Guide (Barista)](docs/STAFF_GUIDE.md)
 - [Owner Guide](docs/OWNER_GUIDE.md)
-- [Figma Import Guide](docs/FIGMA.md)
+- [Design System Guide](design/README.md)
 - [Notion Sync Guide](docs/NOTION_SYNC.md)
 
 ---

@@ -6,8 +6,6 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import multer from 'multer';
-import { uploadToCloudinary } from './services/upload.service.js';
 
 import authRoutes from './routes/auth.routes.js';
 import shiftRoutes from './routes/shift.routes.js';
@@ -30,26 +28,32 @@ import attendanceRoutes from './routes/attendance.routes.js';
 import checklistRoutes  from './routes/checklist.routes.js';
 import memberAuthRouter from './routes/memberAuth.routes.js';
 import memberDataRouter from './routes/memberData.routes.js';
-import analyticsRoutes    from './routes/analytics.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
+const allowedOrigins = (
+  process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean)
+    : ['http://localhost:5173', 'http://localhost:5174']
+);
 
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use(helmet());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
-
-// ── Trust Proxy ───────────────────────────────────────────────────────────────
-// Required for accurate rate-limiting behind a load balancer (Railway, etc.)
-app.set('trust proxy', 1);
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 const limiter = rateLimit({
@@ -91,18 +95,6 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// ── File Upload ───────────────────────────────────────────────────────────────
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
-app.post('/api/upload', upload.single('photo'), async (req, res, next) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file provided' });
-    const url = await uploadToCloudinary(req.file.buffer, 'fika');
-    res.json({ url });
-  } catch (err) {
-    next(err);
-  }
-});
-
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth',        authLimiter, authRoutes);
 app.use('/api/shifts',      shiftRoutes);
@@ -125,7 +117,6 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/checklist',  checklistRoutes);
 app.use('/api/member',     memberAuthRouter);
 app.use('/api/member',     memberDataRouter);
-app.use('/api/analytics',  analyticsRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {
@@ -136,12 +127,16 @@ app.use((_req, res) => {
 app.use(errorHandler);
 
 // ── Start server ──────────────────────────────────────────────────────────────
-const PORT = parseInt(process.env.PORT || '4000', 10);
+export function startServer(port = parseInt(process.env.PORT || '4000', 10)) {
+  return app.listen(port, () => {
+    console.log(`\n🟢 Fika API running on http://localhost:${port}`);
+    console.log(`   Environment : ${process.env.NODE_ENV}`);
+    console.log(`   Health check: http://localhost:${port}/api/health\n`);
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`\n🟢 Fika API running on http://localhost:${PORT}`);
-  console.log(`   Environment : ${process.env.NODE_ENV}`);
-  console.log(`   Health check: http://localhost:${PORT}/api/health\n`);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  startServer();
+}
 
 export default app;

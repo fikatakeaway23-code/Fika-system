@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { prisma } from '../lib/prisma.ts';
-import { sendPushToOwner } from '../services/push.service.js';
+import { prisma } from '../lib/prisma.js';
 
 const createShiftSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -28,6 +27,18 @@ const updateShiftSchema = z.object({
 export async function createShift(req, res, next) {
   try {
     const { date, shiftType, openingFloat } = createShiftSchema.parse(req.body);
+    const expectedShiftByRole = {
+      barista_am: 'am',
+      barista_pm: 'pm',
+    };
+
+    if (req.user.role === 'owner') {
+      return res.status(403).json({ error: 'Owners cannot create shifts from this endpoint' });
+    }
+
+    if (expectedShiftByRole[req.user.role] !== shiftType) {
+      return res.status(403).json({ error: 'You can only create your assigned shift type' });
+    }
 
     const shift = await prisma.shift.create({
       data: {
@@ -81,7 +92,10 @@ export async function getShiftByDate(req, res, next) {
   try {
     const { date } = req.params;
     const shifts = await prisma.shift.findMany({
-      where: { date: new Date(date) },
+      where: {
+        date: new Date(date),
+        ...(req.user.role !== 'owner' ? { userId: req.user.id } : {}),
+      },
       include: {
         user:         { select: { id: true, name: true, role: true } },
         inventoryLog: true,
@@ -170,21 +184,6 @@ export async function submitShift(req, res, next) {
         espressoLog:  true,
       },
     });
-
-    // Push notify owner
-    const shiftLabel = shift.shiftType === 'am' ? 'Morning (AM)' : 'Afternoon (PM)';
-    sendPushToOwner(
-      `☕ ${shiftLabel} shift submitted`,
-      `${shift.user.name} submitted their ${shiftLabel} shift.`,
-      { screen: 'Shifts', shiftId: shift.id }
-    );
-    if (existing.equipmentIssue) {
-      sendPushToOwner(
-        '⚠️ Equipment issue reported',
-        `${shift.user.name} flagged an equipment issue during their shift.`,
-        { screen: 'Shifts', shiftId: shift.id }
-      );
-    }
 
     res.json(shift);
   } catch (err) {
