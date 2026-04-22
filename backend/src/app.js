@@ -28,6 +28,7 @@ import attendanceRoutes from './routes/attendance.routes.js';
 import checklistRoutes  from './routes/checklist.routes.js';
 import memberAuthRouter from './routes/memberAuth.routes.js';
 import memberDataRouter from './routes/memberData.routes.js';
+import analyticsRoutes    from './routes/analytics.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -117,6 +118,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/checklist',  checklistRoutes);
 app.use('/api/member',     memberAuthRouter);
 app.use('/api/member',     memberDataRouter);
+app.use('/api/analytics',  analyticsRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

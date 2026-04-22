@@ -104,3 +104,70 @@ export async function getLeaderboard(req, res, next) {
     next(err);
   }
 }
+
+// GET /api/analytics/waste-trend
+// Returns waste cost grouped by month for the last 6 calendar months
+export async function getWasteTrend(req, res, next) {
+  try {
+    const now = new Date();
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+
+    const entries = await prisma.wasteEntry.findMany({
+      where:   { date: { gte: sixMonthsAgo } },
+      select:  { date: true, category: true, cost: true },
+      orderBy: { date: 'asc' },
+    });
+
+    const buckets = {};
+    for (let i = 5; i >= 0; i--) {
+      const d   = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+      buckets[key] = {
+        month:      d.getMonth() + 1,
+        year:       d.getFullYear(),
+        label:      d.toLocaleString('en-US', { month: 'short', year: '2-digit' }),
+        totalCost:  0,
+        byCategory: {},
+      };
+    }
+
+    for (const e of entries) {
+      const d   = new Date(e.date);
+      const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+      if (!buckets[key]) continue;
+      buckets[key].totalCost += e.cost ?? 0;
+      buckets[key].byCategory[e.category] =
+        (buckets[key].byCategory[e.category] ?? 0) + (e.cost ?? 0);
+    }
+
+    res.json({ trend: Object.values(buckets) });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// GET /api/analytics/stock-health
+// Returns items at or below reorder level, sorted by urgency
+export async function getStockHealth(req, res, next) {
+  try {
+    const all = await prisma.stockItem.findMany({ orderBy: { quantity: 'asc' } });
+
+    const critical = all
+      .filter((s) => s.reorderLevel > 0 && s.quantity <= s.reorderLevel)
+      .map((s) => ({
+        id:           s.id,
+        name:         s.name,
+        category:     s.category,
+        unit:         s.unit,
+        quantity:     s.quantity,
+        reorderLevel: s.reorderLevel,
+        costPerUnit:  s.costPerUnit,
+        pct:          Math.round((s.quantity / s.reorderLevel) * 100),
+      }))
+      .sort((a, b) => a.pct - b.pct);
+
+    res.json({ critical, totalItems: all.length, criticalCount: critical.length });
+  } catch (err) {
+    next(err);
+  }
+}
