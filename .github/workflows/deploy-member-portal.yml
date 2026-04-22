@@ -1,0 +1,40 @@
+name: Deploy Member Portal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'member-portal/**'
+
+jobs:
+  deploy:
+    name: Deploy to Vercel (production)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: member-portal/package-lock.json
+
+      - name: Install dependencies
+        working-directory: member-portal
+        run: npm install --no-workspaces
+
+      - name: Build
+        working-directory: member-portal
+        run: npm run build
+        env:
+          VITE_API_URL: https://desirable-vision-production-b9ee.up.railway.app
+
+      - name: Deploy to Vercel
+        working-directory: member-portal
+        run: npx vercel --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
