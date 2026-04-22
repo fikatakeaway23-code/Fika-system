@@ -5,26 +5,75 @@ import { checklistApi } from '../../lib/api.js';
 import { getUser } from '../../lib/auth.js';
 
 const OPENING_ITEMS = [
-  { key: 'machine_warmed',   label: 'Espresso machine warmed up and flushed' },
-  { key: 'grinder_dialled',  label: 'Grinder dialled in (test shot pulled)' },
-  { key: 'fridge_temp',      label: 'Fridge temperature checked (≤ 4°C)' },
-  { key: 'milk_stocked',     label: 'Milk stock counted and restocked if needed' },
-  { key: 'pastries_stocked', label: 'Pastries/food display stocked' },
-  { key: 'pos_float',        label: 'POS on and float counted' },
-  { key: 'cleaning_stocked', label: 'Cleaning supplies stocked' },
-  { key: 'bar_wiped',        label: 'Bar area wiped and organised' },
-  { key: 'announcement',     label: 'Opening announcement posted (if any)' },
+  // Arrival & security
+  { key: 'arrive_uniform',     label: 'Arrived on time in full, clean uniform' },
+  { key: 'unlock_entrance',    label: 'Unlocked main entrance and shutters' },
+  { key: 'inspect_entrance',   label: 'Inspected entrance area for safety concerns' },
+  // Equipment start-up
+  { key: 'lights_on',          label: 'Switched on lights' },
+  { key: 'machine_on',         label: 'Espresso machine on (allow 20 min warm-up)' },
+  { key: 'grinder_on',         label: 'Grinder switched on' },
+  { key: 'chiller_fridge_on',  label: 'Chiller and deep fridge turned on' },
+  { key: 'equipment_checked',  label: 'Equipment checked for faults or error codes' },
+  { key: 'trash_bins',         label: 'Trash removed and bin liners replaced' },
+  // Hygiene
+  { key: 'apron_changed',      label: 'Apron changed (clean and pressed)' },
+  { key: 'hands_washed',       label: 'Hands washed and sanitised' },
+  // Cleaning & station setup
+  { key: 'machine_exterior',   label: 'Espresso machine exterior and knock box cleaned' },
+  { key: 'portafilters_clean', label: 'Tamper, portafilters and tamping mat cleaned' },
+  { key: 'cups_organised',     label: 'Cup holders, sachets and lids organised' },
+  { key: 'pos_blender_clean',  label: 'POS machine and blender cleaned' },
+  { key: 'chiller_sink_clean', label: 'Chiller, shelves, sink and microwave cleaned' },
+  { key: 'floor_swept',        label: 'Floor swept and mopped' },
+  { key: 'tables_clean',       label: 'Tables, chairs and mirror cleaned' },
+  { key: 'counter_clean',      label: 'Front counter and formica boards cleaned' },
+  // Stock & supply check
+  { key: 'water_checked',      label: 'Water level in machine and dispenser checked' },
+  { key: 'milk_received',      label: 'Milk delivery received and expenses log updated' },
+  { key: 'syrups_checked',     label: 'Syrups checked — pump functionality and stock level' },
+  { key: 'ice_checked',        label: 'Ice supply checked and refilled if needed' },
+  { key: 'bakery_checked',     label: 'Bakery stock checked, order placed if needed' },
+  // Final preparation
+  { key: 'espresso_dialin',    label: 'Espresso dialled in — test shot pulled and logged' },
+  { key: 'coffee_tasted',      label: 'Coffee tasted for quality, grind adjusted if needed' },
+  { key: 'float_prepared',     label: 'Opening float prepared (minimum NPR 4,000)' },
+  { key: 'music_ambience',     label: 'Music and ambience set to brand standard' },
+  { key: 'cafe_ready',         label: 'Café confirmed ready for customers' },
+  { key: 'opening_photo',      label: 'Opening photo taken and sent to WhatsApp group' },
 ];
 
 const CLOSING_ITEMS = [
-  { key: 'machine_backflushed', label: 'Espresso machine backflushed and wiped' },
-  { key: 'grinder_cleaned',     label: 'Grinder cleaned and covered' },
-  { key: 'milk_refrigerated',   label: 'Milk and perishables refrigerated/discarded' },
-  { key: 'cash_counted',        label: 'Cash counted and bagged' },
-  { key: 'pos_closed',          label: 'POS closed and daily report submitted' },
-  { key: 'bar_wiped',           label: 'Bar and counter wiped down' },
-  { key: 'floor_cleaned',       label: 'Floor swept/mopped' },
-  { key: 'doors_locked',        label: 'Doors locked and lights off' },
+  // Shutdown
+  { key: 'last_customer',      label: 'Last customer served professionally' },
+  { key: 'entrance_closed',    label: 'Shutters and main entrance closed' },
+  // Post-service cleaning
+  { key: 'machine_backflushed', label: 'Espresso machine backflushed with chemical cleaner' },
+  { key: 'grinder_purged',     label: 'Grinder purged and hopper wiped clean' },
+  { key: 'knockbox_clean',     label: 'Knock box, tamper, portafilter and steam wand cleaned' },
+  { key: 'counters_clean',     label: 'Counters, POS terminal, microwave and sink cleaned' },
+  { key: 'chiller_clean',      label: 'Chiller shelves and glass panels cleaned' },
+  { key: 'bakery_trays',       label: 'Bakery trays and granite surfaces cleaned' },
+  { key: 'floor_mopped',       label: 'Floor swept and mopped thoroughly' },
+  { key: 'trash_removed',      label: 'All trash removed and bin liners replaced' },
+  // Stock & cash
+  { key: 'milk_discarded',     label: 'All remaining milk discarded (no carry-over)' },
+  { key: 'bakery_logged',      label: 'Bakery stock checked and logged in Inventory Log' },
+  { key: 'cash_counted',       label: 'Cash drawer counted (Float + Sales)' },
+  { key: 'pos_reconciled',     label: 'Reconciled with POS end-of-day report' },
+  { key: 'float_prepared',     label: 'Next-day float prepared (minimum NPR 4,000)' },
+  { key: 'cash_secured',       label: 'All cash secured in safe' },
+  { key: 'machine_refilled',   label: 'Water levels in machine refilled if needed' },
+  // Equipment shutdown
+  { key: 'equipment_off',      label: 'Espresso machine, grinder and blender turned off' },
+  { key: 'lights_off',         label: 'Main lights off (security lights left on)' },
+  { key: 'music_off',          label: 'Music system turned off' },
+  { key: 'fridges_closed',     label: 'Fridges and chillers properly closed' },
+  { key: 'taps_off',           label: 'All taps off and sinks empty' },
+  // Final report
+  { key: 'closing_photo',      label: 'Closing photo taken and sent to WhatsApp group' },
+  { key: 'daily_report',       label: 'Daily Sales Report completed' },
+  { key: 'locked_up',          label: 'All shutters and gates locked' },
 ];
 
 function ChecklistPanel({ type, shiftType, today }) {

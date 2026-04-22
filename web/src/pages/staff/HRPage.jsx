@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hrApi } from '../../lib/api.js';
+import { isOwner, getUser } from '../../lib/auth.js';
 
 const TABS = [
   { value: 'attendance', label: 'Attendance' },
@@ -48,8 +49,13 @@ function RecordRow({ rec, type }) {
 }
 
 export function HRPage() {
-  const [activeTab, setActiveTab] = useState('attendance');
-  const [form, setForm]           = useState({ ...EMPTY.attendance });
+  const owner = isOwner();
+  const user  = getUser();
+  const visibleTabs = owner ? TABS : TABS.filter((t) => t.value === 'leave');
+  const defaultTab  = owner ? 'attendance' : 'leave';
+
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [form, setForm]           = useState({ ...EMPTY[defaultTab] });
   const [error, setError]         = useState('');
   const [saved, setSaved]         = useState(false);
   const qc = useQueryClient();
@@ -99,7 +105,7 @@ export function HRPage() {
 
       {/* Tabs */}
       <div className="flex border-b border-gray-100">
-        {TABS.map(({ value, label }) => (
+        {visibleTabs.map(({ value, label }) => (
           <button
             key={value}
             onClick={() => setActiveTab(value)}
@@ -115,19 +121,21 @@ export function HRPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Log form */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h2 className="font-bold text-gray-900 mb-4">Log {TABS.find((t) => t.value === activeTab)?.label}</h2>
+          <h2 className="font-bold text-gray-900 mb-4">Log {visibleTabs.find((t) => t.value === activeTab)?.label}</h2>
 
           {saved && <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800 font-semibold">✓ Record saved.</div>}
           {error && <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-danger">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-3">
-            {/* Staff selector */}
-            <div>
-              <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-1">Staff Member</label>
-              <select value={form.staffMemberId} onChange={setE('staffMemberId')} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary bg-white">
-                {STAFF.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-              </select>
-            </div>
+            {/* Staff selector — owner only */}
+            {owner && (
+              <div>
+                <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-1">Staff Member</label>
+                <select value={form.staffMemberId} onChange={setE('staffMemberId')} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary bg-white">
+                  {STAFF.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </div>
+            )}
 
             {/* Attendance */}
             {activeTab === 'attendance' && (
@@ -200,7 +208,7 @@ export function HRPage() {
 
         {/* Records list */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h2 className="font-bold text-gray-900 mb-4">{TABS.find((t) => t.value === activeTab)?.label} Records</h2>
+          <h2 className="font-bold text-gray-900 mb-4">{visibleTabs.find((t) => t.value === activeTab)?.label} Records</h2>
           {isLoading ? (
             <p className="text-muted text-sm text-center py-8">Loading…</p>
           ) : !data?.length ? (
