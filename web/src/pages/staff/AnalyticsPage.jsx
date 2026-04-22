@@ -48,6 +48,18 @@ export function AnalyticsPage() {
     staleTime: 60_000,
   });
 
+  const { data: waste } = useQuery({
+    queryKey: ['analytics-waste-trend'],
+    queryFn:  () => analyticsApi.wasteTrend().then((r) => r.data),
+    staleTime: 120_000,
+  });
+
+  const { data: stock } = useQuery({
+    queryKey: ['analytics-stock-health'],
+    queryFn:  () => analyticsApi.stockHealth().then((r) => r.data),
+    staleTime: 120_000,
+  });
+
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-black text-gray-900">Analytics</h1>
@@ -190,6 +202,92 @@ export function AnalyticsPage() {
             </table>
           )}
         </div>
+      </section>
+
+      {/* Waste Cost Trend — last 6 months */}
+      <section>
+        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Waste Cost Trend (Last 6 Months)</h2>
+        {!waste?.trend?.length ? (
+          <p className="text-sm text-gray-400">No waste data recorded yet.</p>
+        ) : (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="space-y-3">
+              {waste.trend.map((m) => {
+                const maxCost = Math.max(...waste.trend.map((t) => t.totalCost), 1);
+                const pct     = Math.round((m.totalCost / maxCost) * 100);
+                return (
+                  <div key={`${m.year}-${m.month}`} className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-gray-500 w-14 text-right">{m.label}</span>
+                    <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-red-400 transition-all duration-500 flex items-center justify-end pr-2"
+                        style={{ width: `${Math.max(pct, 2)}%` }}
+                      >
+                        {pct > 15 && (
+                          <span className="text-[10px] text-white font-bold">
+                            NPR {Math.round(m.totalCost).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {pct <= 15 && (
+                      <span className="text-xs text-gray-500 w-20">NPR {Math.round(m.totalCost).toLocaleString()}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs text-gray-400 mt-3">
+              6-month total: NPR {Math.round(waste.trend.reduce((s, m) => s + m.totalCost, 0)).toLocaleString()}
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* Stock Health */}
+      <section>
+        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+          Stock Health
+          {stock?.criticalCount > 0 && (
+            <span className="ml-2 text-xs font-bold text-red-600 normal-case">
+              {stock.criticalCount} item{stock.criticalCount !== 1 ? 's' : ''} need restocking
+            </span>
+          )}
+        </h2>
+        {!stock ? (
+          <p className="text-sm text-gray-400">Loading…</p>
+        ) : stock.criticalCount === 0 ? (
+          <div className="bg-green-50 border border-green-100 rounded-2xl px-5 py-4 text-sm text-green-700 font-medium">
+            All {stock.totalItems} stock items are above reorder levels. ✓
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Item</th>
+                  <th className="text-left px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Category</th>
+                  <th className="text-right px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Stock</th>
+                  <th className="text-right px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Reorder at</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {stock.critical.map((item) => (
+                  <tr key={item.id} className={item.quantity === 0 ? 'bg-red-50' : ''}>
+                    <td className="px-4 py-3 font-semibold text-gray-900">{item.name}</td>
+                    <td className="px-4 py-3 text-gray-500 hidden sm:table-cell capitalize">{item.category}</td>
+                    <td className="px-4 py-3 text-right font-bold">
+                      <span className={item.quantity === 0 ? 'text-red-600' : 'text-amber-600'}>
+                        {item.quantity} {item.unit}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right text-gray-400 text-xs">{item.reorderLevel} {item.unit}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </div>
   );

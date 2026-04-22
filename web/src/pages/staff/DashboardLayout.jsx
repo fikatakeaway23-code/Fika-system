@@ -123,7 +123,7 @@ export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: topUpData } = useQuery({
-    queryKey:        ['topup-pending-count'],
+    queryKey:        ['topup-requests'],
     queryFn:         () => membershipApi.getTopUpRequests('pending').then((r) => r.data),
     enabled:         owner,
     refetchInterval: 60_000,

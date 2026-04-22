@@ -70,6 +70,10 @@ export const membershipApi = {
   renew:           (id)        => api.post(`/memberships/${id}/renew`),
   createAccount:   (id, email) => api.post(`/memberships/${id}/member-account`, { email }),
   deleteAccount:   (id)        => api.delete(`/memberships/${id}/member-account`),
+  getQr:               (id)        => api.get(`/memberships/${id}/qr`),
+  getTopUpRequests:    (status)    => api.get('/memberships/topup-requests', { params: status ? { status } : {} }),
+  updateTopUpRequest:  (requestId, status) => api.patch(`/memberships/topup-requests/${requestId}`, { status }),
+  getInvoice:          (id, month, year) => api.get(`/memberships/${id}/invoice`, { params: { month, year }, responseType: 'blob' }),
 };
 
 export const hrApi = {
@@ -165,4 +169,6 @@ export const analyticsApi = {
   mrr:         () => api.get('/analytics/mrr'),
   renewals:    (days = 30) => api.get('/analytics/renewals', { params: { days } }),
   leaderboard: (month, year) => api.get('/analytics/leaderboard', { params: { month, year } }),
+  wasteTrend:  () => api.get('/analytics/waste-trend'),
+  stockHealth: () => api.get('/analytics/stock-health'),
 };

@@ -341,6 +341,26 @@ export function MembershipsPage() {
     staleTime: 60_000,
   });
 
+  const { data: topUpData } = useQuery({
+    queryKey:        ['topup-requests'],
+    queryFn:         () => membershipApi.getTopUpRequests('pending').then((r) => r.data),
+    staleTime:       30_000,
+    refetchInterval: 60_000,
+  });
+  const pendingRequests = topUpData?.requests ?? [];
+
+  const ackTopUp = useMutation({
+    onMutate: ({ requestId }) => {
+      setAckError('');
+      setAckLoadingIds((s) => new Set([...s, requestId]));
+    },
+    mutationFn: ({ requestId, status }) => membershipApi.updateTopUpRequest(requestId, status),
+    onSuccess:  () => qc.invalidateQueries({ queryKey: ['topup-requests'] }),
+    onError:    () => setAckError('Failed to update top-up request. Please try again.'),
+    onSettled:  (_, __, { requestId }) =>
+      setAckLoadingIds((s) => { const n = new Set(s); n.delete(requestId); return n; }),
+  });
+
   const { mutate: addMember, isPending: isAdding } = useMutation({
     mutationFn: (data) => membershipApi.create(data),
     onSuccess: () => {
@@ -356,6 +376,21 @@ export function MembershipsPage() {
     mutationFn: ({ id, data }) => membershipApi.update(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['memberships-web'] }),
   });
+
+  async function handleDownloadInvoice(membership) {
+    setInvoiceLoading(membership.id);
+    try {
+      const now = new Date();
+      const res = await membershipApi.getInvoice(membership.id, now.getMonth() + 1, now.getFullYear());
+      const url = URL.createObjectURL(res.data);
+      const a   = document.createElement('a');
+      a.href    = url;
+      a.download = `fika-invoice-${membership.companyName.replace(/[^a-z0-9\-_ ]/gi, '_')}-${now.getFullYear()}-${now.getMonth() + 1}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch { /* silent — non-critical */ }
+    finally { setInvoiceLoading(null); }
+  }
 
   function handleAdd(e) {
     e.preventDefault();
@@ -386,6 +421,9 @@ export function MembershipsPage() {
   const [redeemTarget, setRedeemTarget] = useState(null);
   const [usageTarget,  setUsageTarget]  = useState(null);
   const [portalTarget, setPortalTarget] = useState(null);
+  const [ackLoadingIds, setAckLoadingIds] = useState(new Set());
+  const [ackError, setAckError]           = useState('');
+  const [invoiceLoading, setInvoiceLoading] = useState(null);
 
   function daysUntilRenewal(renewalDate) {
     if (!renewalDate) return null;
@@ -434,6 +472,47 @@ export function MembershipsPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {pendingRequests.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
+          <span className="text-sm font-bold text-amber-800">
+            {pendingRequests.length} Pending Top-up Request{pendingRequests.length !== 1 ? 's' : ''}
+          </span>
+          {ackError && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{ackError}</p>
+          )}
+          <div className="space-y-2">
+            {pendingRequests.map((req) => (
+              <div key={req.id} className="bg-white rounded-xl border border-amber-100 p-3 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate">{req.membership.companyName}</p>
+                  {req.message && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{req.message}</p>}
+                  <p className="text-[11px] text-gray-400 mt-0.5">
+                    {new Date(req.requestedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    {req.membership.drinksRemaining != null && ` · ${req.membership.drinksRemaining} drinks remaining`}
+                  </p>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => ackTopUp.mutate({ requestId: req.id, status: 'acknowledged' })}
+                    disabled={ackLoadingIds.has(req.id)}
+                    className="px-3 py-1.5 text-xs font-bold border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors disabled:opacity-50"
+                  >
+                    Acknowledge
+                  </button>
+                  <button
+                    onClick={() => ackTopUp.mutate({ requestId: req.id, status: 'fulfilled' })}
+                    disabled={ackLoadingIds.has(req.id)}
+                    className="px-3 py-1.5 text-xs font-bold bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors disabled:opacity-50"
+                  >
+                    Fulfilled ✓
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -548,6 +627,13 @@ export function MembershipsPage() {
                 Portal
               </button>
             </div>
+            <button
+              onClick={() => handleDownloadInvoice(selMem)}
+              disabled={invoiceLoading === selMem.id}
+              className="w-full py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              {invoiceLoading === selMem.id ? 'Generating PDF…' : '⬇ Download Invoice PDF'}
+            </button>
 
             {/* Info */}
             {[
